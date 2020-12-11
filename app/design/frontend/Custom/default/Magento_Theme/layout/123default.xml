@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright © Magento, Inc. All rights reserved.
+ * See COPYING.txt for license details.
+ */
+-->
+<page layout="3columns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="default_head_blocks"/>
+    <body>
+        <referenceContainer name="header.container">
+            
+			<container name="header.panel.wrapper" htmlClass="topStrip cf" htmlTag="div" before="-"><!--topStrip cf (REMOVE SEARCH AND FOOTER)  htmlClass="panel wrapper"-->
+				<block class="Magento\Framework\View\Element\Template" name="facebookpixel_base_code" template="Magento_Theme::html/facebookpixel_base_code.phtml"/>
+					<container name="header.panel" htmlTag="div" htmlClass="container">
+					
+							<block class="Magento\Cms\Block\Block" name="top_header">
+								<arguments>
+									<argument name="block_id" xsi:type="string">top_header</argument>
+								</arguments>
+								<block class="Magento\Framework\View\Element\Template" name="skip_to_content" template="Magento_Theme::html/skip.phtml">
+									<arguments>
+										<argument name="target" xsi:type="string">contentarea</argument>
+										<argument name="label" translate="true" xsi:type="string">Skip to Content</argument>
+									</arguments>
+								</block>
+							</block>
+							<block class="Magento\Customer\Block\Account\Navigation" name="top.links">
+								<arguments>
+									<argument name="css_class" xsi:type="string">header links</argument>
+								</arguments>
+							</block>
+					</container>
+				
+            </container>
+            <container name="header-wrapper" label="Page Header" as="header-wrapper" htmlTag="div" htmlClass="mainNavigation" htmlId="mainNav">
+				 <container name="menuPart.cf" label="menuPart cf" htmlTag="div" htmlClass="menuPart cf">
+					<container name="container" htmlTag="div" htmlClass="container">
+						 <block class="Magento\Framework\View\Element\Template" name="store.menu" group="navigation-sections" template="Magento_Theme::html/container.phtml"  cacheable="false"  >
+							<arguments>
+								<argument name="title" translate="true" xsi:type="string">Menu</argument>
+							</arguments>
+							<block class="Magento\Theme\Block\Html\Topmenu"  name="catalog.topnav" template="Magento_Theme::html/topmenu.phtml"  cacheable="false"  before="-"/>
+						</block>
+						<block class="Magento\Theme\Block\Html\Header\Logo" name="logo">
+							<arguments>
+								<argument name="logo_img_width" xsi:type="number">123</argument>
+								<argument name="logo_img_height" xsi:type="number">34</argument>
+							</arguments>
+						</block>
+						<block class="Magento\Customer\Block\Account\Customer"  cacheable="false"  name="header.custom.login" template="Magento_Theme::html/customlogin.phtml" after="logo"/>
+						<!-- <block class="Magento\Cms\Block\Block" name="header_cus_portal">
+							<arguments>
+								<argument name="block_id" xsi:type="string">header_cus_portal</argument>
+							</arguments>
+						</block> -->
+					</container>
+				</container>
+            </container>
+        </referenceContainer>		
+    </body>
+</page>

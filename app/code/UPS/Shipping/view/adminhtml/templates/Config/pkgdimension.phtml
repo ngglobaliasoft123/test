@@ -1,0 +1,575 @@
+<?php
+    $selectedCountry = $country = strtolower($block->getCountryCode());
+    $addressServices = $block->getAddressServices($selectedCountry);
+    $packages = $block->getListPackage();
+    $dimensions = $block->getListDimension();
+    $backuprates = $block->getListBackuprate();
+    //getListBackuprate
+    $countPackage = count($packages);
+    $countDimension = count($dimensions);
+    $countBackuprates = count($backuprates);
+    // getPackageDimension
+    $getPackageDimension = 1*$block->getPackageDimension();
+    $getIncludeDimension = 1*$block->getIncludeDimension();
+
+    $upgradePackage = false;
+
+    if ($getPackageDimension < 2 && $countPackage > 0 && isset($packages[0]) && empty($packages[0]['package_number'])) {
+        $upgradePackage = true;
+        $packages[0]['package_number'] = 1;
+    }
+    if ('us' == $selectedCountry) {
+        $messageWeightManagerMax = __("Error! Maximum allowable weight per package weight is 150lbs.");
+        $messageErrorVolumnMax = __("Error! Package exceeds the maximum allowable size of 165 inches (the maximum allowable size calculation = length + 2 * width + 2 * height).");
+        $messageWarningWolumnMin = __("Warning! Maximum allowable per package size for shipments created for UPS Access Point is 130 inches (the maximum allowable size calculation = length + 2 * width + 2 * height).");
+        $messageWarningWeightMax = __("Warning! Maximum allowable per package weight for shipments created for UPS Access Point is 44lbs.");
+    } else {
+        $messageWeightManagerMax = __("Error! Maximum allowable per package weight is 70.00 kgs or 154.32 lbs.");
+        $messageErrorVolumnMax = __("Error! Package exceeds the maximum allowable size of 400 cm or 157.48 inches (the maximum allowable size calculation = length + 2 * width + 2 * height).");
+        $messageWarningWolumnMin = __("Warning! Maximum allowable per package size for shipments created for UPS Access Points is 330 cm or 129.92 inches (the maximum allowable size calculation = length + 2 * width + 2 * height).");
+        $messageWarningWeightMax = __("Warning! Maximum allowable per package weight for shipments created for UPS Access Points is 20.00 kgs or 44.09 lbs.");
+
+    }
+    $messageErrorLengthMax = __("Error! Maximum allowable package length is 108 inches.");
+    //$messageWarningWeightMax = __("Warning! Maximum allowable per package weight for shipments created for UPS Access Point is 44lbs.");
+    $messageWarningWeightMin = __("Warning! Maximum allowable package length for shipments created for UPS Access Point is 38 inches");
+    //$messageWeightManagerWarning = __("Warning! Maximum allowable per package weight for shipments created for UPS Access Points is 20.00 kgs or 44.09 lbs.");
+?>
+<div id="error-notice"></div>
+<div id="warning-notice"></div>
+<div id="error-dimension"></div>
+<div class="panel col-lg-12 card">
+    <div class="card-header" id="headingFive">
+        <div class="page-main-actions">
+            <h2 class="titleDefaultPackage"  style="margin-bottom:0%"><?= __('Default Package Setting')?></h2>
+        </div>
+    </div>
+    <div>
+        <div class="card-body form-wrapper">
+            <div class="form-group">
+                <p><?= __("Please select an option")?></p>
+                <form id="form_package_setting" method="POST" action="<?php echo $block->getUrl('upsshipping/config/savePkgdimension') ?>">
+                    <input type="hidden" name="method" value="addPackageDimension">
+                    <div class="form-group">
+                        <div class="row default-package-option">
+                            <label class="control-label">
+                                <input type="radio" value="1" name="package_setting_option"  id="default_package_radio" <?php echo (($getPackageDimension < 2) ? 'checked' : '') ?>>
+                                <b><?= __("Basic (number of items in the e-shopper order determine the package size)")?></b>
+                            </label>
+                            <p class="radio-text show-default-package">
+                                <span><?= __("Add default packages if you would like the package size used for rating to change based on the number of items in the e-shopper’s order")?></span>
+                            </p>
+                            <p class="radio-note show-default-package">
+                                <span><?= __("Note: if the number of items in the e-shopper order do not match any of your entries, then the size of the package used for rating will be based on that of the highest item count exceeded by the e-shopper order.")?></span>
+                            </p>
+                            <div class="show-hide">
+                                <div class="col-m-1 col-no-padding"></div>
+                                <div class="col-m-11 col-no-padding">
+                                    <div id="default_package">
+                                        <?php if ($countPackage > 0) { ?>
+                                            <?php foreach ($packages as $keyPackage => $package) { ?>
+                                                <div class="row input-row" id="default_package_<?=$keyPackage?>">
+                                                <div class="col-m-8">
+                                                    <div class="col-m-4">
+                                                        <?php if ($keyPackage == 0) { ?>
+                                                        <p class="text-center"><small><?= __("Number of items in order")?></small><o class="hidden-color">*</o></p>
+                                                        <?php } ?>
+                                                        <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                            maxlength="15" class="admin__control-text width-input" type="text"
+                                                            name="default_package[<?=$keyPackage?>][number_of_item]" value="<?=$package['package_number']?>">
+                                                    </div>
+                                                    <div class="col-m-2">
+                                                    <?php if ($keyPackage == 0) { ?>
+                                                        <p class="text-center"><small><?= __("Length")?></small><o class="hidden-color">*</o></p>
+                                                        <?php } ?>
+                                                        <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                            maxlength="15" class="admin__control-text width-input" type="text"
+                                                            name="default_package[<?=$keyPackage?>][length]" value="<?=$package['length']?>">
+                                                    </div>
+                                                    <div class="col-m-2">
+                                                    <?php if ($keyPackage == 0) { ?>
+                                                        <p class="text-center"><small><?= __("Width")?></small><o class="hidden-color">*</o></p>
+                                                        <?php } ?>
+                                                        <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                            maxlength="15" class="admin__control-text width-input" type="text"
+                                                            name="default_package[<?=$keyPackage?>][width]" value="<?=$package['width']?>">
+                                                    </div>
+                                                    <div class="col-m-2">
+                                                    <?php if ($keyPackage == 0) { ?>
+                                                        <p class="text-center"><small><?= __("Height")?></small><o class="hidden-color">*</o></p>
+                                                        <?php } ?>
+                                                        <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                            maxlength="15" class="admin__control-text width-input" type="text"
+                                                            name="default_package[<?=$keyPackage?>][height]" value="<?=$package['height']?>">
+                                                    </div>
+                                                    <div class="col-m-2">
+                                                    <?php if ($keyPackage == 0) { ?>
+                                                        <p><br></p>
+                                                        <?php } ?>
+                                                        <select class="select admin__control-select width-input" name="default_package[<?=$keyPackage?>][unit_dimension]">
+                                                            <option value="cm" <?=(('cm' == $package['unit_dimension']) ? 'selected="selected"' : '') ?>>Cm</option>
+                                                            <option value="inch" <?=(('inch' == $package['unit_dimension']) ? 'selected="selected"' : '') ?>>Inch</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-m-4">
+                                                    <div class="col-m-4">
+                                                    <?php if ($keyPackage == 0) { ?>
+                                                        <p class="text-center"><small><?= __("Weight")?></small><o class="hidden-color">*</o></p>
+                                                        <?php } ?>
+                                                        <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                            maxlength="15" class="admin__control-text width-input" type="text"
+                                                            name="default_package[<?=$keyPackage?>][weight]" value="<?=$package['weight']?>">
+                                                    </div>
+                                                    <div class="col-m-4">
+                                                    <?php if ($keyPackage == 0) { ?>
+                                                        <p><br></p>
+                                                        <?php } ?>
+                                                        <select class="select admin__control-select width-input" name="default_package[<?=$keyPackage?>][unit_weight]">
+                                                            <option value="kgs" <?=(('kgs' == $package['unit_weight']) ? 'selected="selected"' : '')?>>Kg</option>
+                                                            <option value="lbs" <?=(('lbs' == $package['unit_weight']) ? 'selected="selected"' : '')?>>Pounds</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-m-2">
+                                                    <div class="btn-minus remove-row <?php if ($keyPackage == 0) { ?>hidden <?php } ?>"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <?php
+                                            if ($upgradePackage == true ) {
+                                                break;
+                                            }
+                                        } ?>
+                                        <?php } else { ?>
+                                        <div class="row input-row" id="default_package_1">
+                                            <div class="col-m-8">
+                                                <div class="col-m-4">
+                                                    <p class="text-center"><small><?= __("Number of items in order")?></small><o class="hidden-color">*</o></p>
+                                                    <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="default_package[1][number_of_item]" value="0">
+                                                </div>
+                                                <div class="col-m-2">
+                                                    <p class="text-center"><small><?= __("Length")?></small><o class="hidden-color">*</o></p>
+                                                    <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="default_package[1][length]" value="0">
+                                                </div>
+                                                <div class="col-m-2">
+                                                    <p class="text-center"><small><?= __("Width")?></small><o class="hidden-color">*</o></p>
+                                                    <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="default_package[1][width]" value="0">
+                                                </div>
+                                                <div class="col-m-2">
+                                                    <p class="text-center"><small><?= __("Height")?></small><o class="hidden-color">*</o></p>
+                                                    <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="default_package[1][height]" value="0">
+                                                </div>
+                                                <div class="col-m-2">
+                                                    <p><br></p>
+                                                    <select class="select admin__control-select width-input" name="default_package[1][unit_dimension]">
+                                                        <?php if ('us'==$selectedCountry) { ?>
+                                                            <option value="cm">Cm</option>
+                                                            <option value="inch" selected>Inch</option>
+                                                        <?php } else { ?>
+                                                            <option value="cm" selected>Cm</option>
+                                                            <option value="inch">Inch</option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-m-4">
+                                                <div class="col-m-4">
+                                                    <p class="text-center"><small><?= __("Weight")?></small><o class="hidden-color">*</o></p>
+                                                    <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="default_package[1][weight]" value="0">
+                                                </div>
+                                                <div class="col-m-4">
+                                                    <p><br></p>
+                                                    <select class="select admin__control-select width-input" name="default_package[1][unit_weight]">
+                                                        <?php if ('us' == $selectedCountry) { ?>
+                                                            <option value="kgs">Kg</option>
+                                                            <option value="lbs" selected>Pounds</option>
+                                                        <?php } else { ?>
+                                                            <option value="kgs" selected>Kg</option>
+                                                            <option value="lbs">Pounds</option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-m-2">
+                                                    <p><br></p>
+                                                    <div class="btn-minus remove-row hidden"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php } ?>
+                                    </div>
+                                    <p class="add-row" id="add_row_default_package"><a href="javascript:;"><?= __("Add New Package")?></a></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row product-dimension-option">
+                            <label class="control-label">
+                                <input type="radio" value="2" name="package_setting_option"  id="product_dimension_radio" <?php echo (($getPackageDimension == 2) ? 'checked' : '') ?>>
+                                <b><?= __("Advanced (weights and dimensions of products in the e-shopper order determine the package size)")?></b>
+                            </label>
+                            <p class="row radio-note show-hide">
+                                <span><?= __("Warning! To use this option you must enter product weights in the product settings of your shop.")?></span>
+                            </p>
+                            <div class="row show-hide">
+                                <label class="col-m-3 setting-label">
+                                    <span><?= __("Currency")?></span>
+                                </label>
+                                <div class="col-m-2" style="width: 35%">
+                                    <input type="text" class="admin__control-text" disabled="" value="USD">
+                                </div>
+                            </div>
+                            <div class="row show-hide">
+                                <label class="col-m-3 setting-label" for="include_dimensions">
+                                    <span><?= __("Include dimensions in rating")?></span>
+                                </label>
+                                <div class="col-m-7">
+                                    <div class="admin__actions-switch" data-role="switcher">
+                                        <input type="checkbox" class="admin__actions-switch-checkbox" id="include_dimensions" name="config[service/upsshipping/item_level_rating_include_dimensions]" <?php echo (($getIncludeDimension == 1) ? 'checked' : '') ?>>
+                                        <label class="admin__actions-switch-label" for="include_dimensions">
+                                            <span class="admin__actions-switch-text" data-text-on="<?= __("Yes")?>" data-text-off="<?= __("No")?>"></span>
+                                        </label>
+                                    </div>
+                                    <p class="note">
+                                        <span><?= __("If set to “No”, rates will be based on product weights only.&nbsp; If set to “Yes”, product dimensions must be entered in the product settings of your shop")?></span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row show-hide">
+                                <label class="col-m-3 setting-label">
+                                    <span><?= __("Package dimensions:")?></span>
+                                </label>
+                            </div>
+                            <div class="row show-hide">
+                                <div class="col-m-2"></div>
+                                <div class="col-m-10">
+                                    <div id="product_dimension">
+                                    <?php if ($countDimension > 0) { ?>
+                                        <?php foreach ($dimensions as $keyDimension => $dimension) { ?>
+                                            <div class="row input-row" id="product_dimension_<?=$keyDimension?>">
+                                            <div class="col-m-8">
+                                                <div class="col-m-4">
+                                                <?php if ($keyDimension == 0) { ?>
+                                                    <p class="text-center"><small><?= __("Name")?></small><o class="hidden-color">*</o></p>
+                                                    <?php } ?>
+                                                    <input data-validate="{'required': true}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="product_dimension[<?=$keyDimension?>][package_name]" value="<?=$dimension['package_name']?>">
+                                                </div>
+                                                <div class="col-m-2">
+                                                <?php if ($keyDimension == 0) { ?>
+                                                    <p class="text-center"><small><?= __("Length")?></small><o class="hidden-color">*</o></p>
+                                                    <?php } ?>
+                                                    <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="product_dimension[<?=$keyDimension?>][length]" value="<?=$dimension['length']?>">
+                                                </div>
+                                                <div class="col-m-2">
+                                                <?php if ($keyDimension == 0) { ?>
+                                                    <p class="text-center"><small><?= __("Width")?></small><o class="hidden-color">*</o></p>
+                                                    <?php } ?>
+                                                    <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="product_dimension[<?=$keyDimension?>][width]" value="<?=$dimension['width']?>">
+                                                </div>
+                                                <div class="col-m-2">
+                                                <?php if ($keyDimension == 0) { ?>
+                                                    <p class="text-center"><small><?= __("Height")?></small><o class="hidden-color">*</o></p>
+                                                    <?php } ?>
+                                                    <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="product_dimension[<?=$keyDimension?>][height]" value="<?=$dimension['height']?>">
+                                                </div>
+                                                <div class="col-m-2">
+                                                <?php if ($keyDimension == 0) { ?>
+                                                    <p><br></p>
+                                                    <?php } ?>
+                                                    <select class="select admin__control-select width-input" name="product_dimension[<?=$keyDimension?>][unit_dimension]">
+                                                        <option value="cm" <?=(('cm' == $dimension['unit_dimension'])?'selected="selected"' : '')?>>Cm</option>
+                                                        <option value="inch" <?=(('inch' == $dimension['unit_dimension'])?'selected="selected"' : '')?>>Inch</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-m-4">
+                                                <div class="col-m-6">
+                                                <?php if ($keyDimension == 0) { ?>
+                                                    <p class="text-center"><small><?= __("Max Weight")?></small><o class="hidden-color">*</o></p>
+                                                    <?php } ?>
+                                                    <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="product_dimension[<?=$keyDimension?>][weight]" value="<?=$dimension['weight']?>">
+                                                </div>
+                                                <div class="col-m-4">
+                                                <?php if ($keyDimension == 0) { ?>
+                                                    <p><br></p>
+                                                    <?php } ?>
+                                                    <select class="select admin__control-select width-input cho nay" name="product_dimension[<?=$keyDimension?>][unit_weight]">
+                                                        <option value="kgs" <?=(('kgs' == $dimension['unit_weight']) ? 'selected="selected"' : '')?>>Kg</option>
+                                                        <option value="lbs" <?=(('lbs' == $dimension['unit_weight']) ? 'selected="selected"' : '')?>>Pounds</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-m-2">
+                                                <?php if ($keyDimension == 0) { ?>
+                                                    <p><br></p>
+                                                    <?php } ?>
+                                                    <div class="btn-minus remove-row <?php if ($keyDimension == 0) { ?>hidden <?php } ?>"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <?php } ?>
+                                    <?php } else { ?>
+                                        <div class="row input-row" id="product_dimension_1">
+                                            <div class="col-m-8">
+                                                <div class="col-m-4">
+                                                    <p class="text-center"><small><?= __("Name")?></small><o class="hidden-color">*</o></p>
+                                                    <input data-validate="{'required': true}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="product_dimension[1][package_name]" value="">
+                                                </div>
+                                                <div class="col-m-2">
+                                                    <p class="text-center"><small><?= __("Length")?></small><o class="hidden-color">*</o></p>
+                                                    <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="product_dimension[1][length]" value="0">
+                                                </div>
+                                                <div class="col-m-2">
+                                                    <p class="text-center"><small><?= __("Width")?></small><o class="hidden-color">*</o></p>
+                                                    <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="product_dimension[1][width]" value="0">
+                                                </div>
+                                                <div class="col-m-2">
+                                                    <p class="text-center"><small><?= __("Height")?></small><o class="hidden-color">*</o></p>
+                                                    <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="product_dimension[1][height]" value="0">
+                                                </div>
+                                                <div class="col-m-2">
+                                                    <p><br></p>
+                                                    <select class="select admin__control-select width-input" name="product_dimension[1][unit_dimension]">
+                                                        <?php if ('us' == $selectedCountry) { ?>
+                                                            <option value="cm">Cm</option>
+                                                            <option value="inch" selected>Inch</option>
+                                                        <?php } else { ?>
+                                                            <option value="cm" selected>Cm</option>
+                                                            <option value="inch">Inch</option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-m-4">
+                                                <div class="col-m-6">
+                                                    <p class="text-center"><small><?= __("Max Weight")?></small><o class="hidden-color">*</o></p>
+                                                    <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                           maxlength="15" class="admin__control-text width-input" type="text"
+                                                           name="product_dimension[1][weight]" value="0">
+                                                </div>
+                                                <div class="col-m-4">
+                                                    <p><br></p>
+                                                    <select class="select admin__control-select width-input" name="product_dimension[1][unit_weight]">
+                                                        <?php if ('us' == $selectedCountry) { ?>
+                                                            <option value="kgs">Kg</option>
+                                                            <option value="lbs" selected>Pounds</option>
+                                                        <?php } else { ?>
+                                                            <option value="kgs" selected>Kg</option>
+                                                            <option value="lbs">Pounds</option>
+                                                        <?php } ?>
+                                                    </select>
+                                                </div>
+                                                <div class="col-m-2">
+                                                    <p><br></p>
+                                                    <div class="btn-minus remove-row hidden"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php } ?>
+                                    </div>
+                                    <p class="add-row" id="add_row_product_dimension"><a href="javascript:;"><?= __("Add New Package")?></a></p>
+                                    <p class="note">
+                                        <span><?= __("Note: the plugin will create a custom package size if an e-shopper order is larger than the packages you enter")?></span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="row show-hide">
+                                <label class="col-m-3 setting-label">
+                                    <span><?= __("Backup rate:")?></span>
+                                </label>
+                                <div class="col-m-9">
+                                    <div id="backup_rate">
+                                    <?php if ($countBackuprates > 0) { ?>
+                                        <?php foreach ($backuprates as $keyBackupRates => $backuprate) { ?>
+                                        <div class="row input-row" id="backup_rate_<?=$keyBackupRates?>">
+                                            <div class="col-m-6">
+                                            <?php if ($keyBackupRates == 0) { ?>
+                                                <p class="text-center"><small><?= __("Service Name")?></small></p>
+                                                <?php } ?>
+                                                <select class="select admin__control-select width-input" name="backup_rate[<?=$keyBackupRates?>][service_id]">
+                                                    <?php foreach ($addressServices as $services) { ?>
+                                                        <?php if ($services['service_selected']==1) { ?>
+                                                            <option value="<?= $services['id'] ?>" <?=(($services['id'] == $backuprate['service_id'])?'selected':'')?>>
+                                                            <?php if ($services['service_symbol'] == '&trade;') { ?>
+                                                                <?= __("UPS Access Point&trade; Economy") ?>
+                                                            <?php } elseif ($services['service_name'] == 'UPS Standard') { ?>
+                                                                <?= __('UPS' . $services['service_symbol'] . ' Standard') ?>
+                                                            <?php } elseif ($services['service_name'] == 'UPS Express 12:00') { ?>
+                                                                <?= __('UPS Express 12:00') ?>
+                                                            <?php } elseif ($services['service_name'] == 'UPS Ground') { ?>
+                                                                <?= __('UPS' . $services['service_symbol'] . ' Ground') ?>
+                                                            <?php } elseif ($services['service_name'] == 'UPS Next Day Air Early') { ?>
+                                                                <?= __('UPS Next Day Air' . $services['service_symbol'] . ' Early') ?>
+                                                            <?php } elseif ($services['service_name'] == 'UPS Standard - Saturday Delivery') { ?>
+                                                                <?= __('UPS' . $services['service_symbol'] . ' Standard - Saturday Delivery') ?>
+                                                            <?php } elseif ($services['service_name'] == 'UPS Express - Saturday Delivery') { ?>
+                                                                <?= __('UPS Express' . $services['service_symbol'] . '  - Saturday Delivery') ?>
+                                                            <?php } else { ?>
+                                                                <?= __($services['service_name'] . $services['service_symbol']) ?>
+                                                            <?php } ?>
+                                                            </option>
+                                                        <?php } ?>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                            <div class="col-m-3">
+                                            <?php if ($keyBackupRates == 0) { ?>
+                                                <p class="text-center"><small><?= __("Rate")?></small></p>
+                                                <?php } ?>
+                                                <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                       maxlength="15" class="admin__control-text width-input" type="text"
+                                                       name="backup_rate[<?=$keyBackupRates?>][rate]" value="<?=$backuprate['fallback_rate']?>">
+                                            </div>
+                                            <div class="col-m-3">
+                                            <?php if ($keyBackupRates == 0) { ?>
+                                                <p><br></p>
+                                                <?php } ?>
+                                                <div class="btn-minus remove-row <?php if ($keyBackupRates == 0) { ?>hidden <?php } ?>"></div>
+                                            </div>
+                                        </div>
+                                        <?php } ?>
+                                    <?php } else { ?>
+                                    <div class="row input-row" id="backup_rate_1">
+                                        <div class="col-m-6">
+                                            <p class="text-center"><small><?= __("Service Name")?></small></p>
+                                            <select class="select admin__control-select width-input" name="backup_rate[1][service_id]">
+                                                <?php foreach ($addressServices as $services) { ?>
+                                                    <?php if ($services['service_selected']==1) { ?>
+                                                        <option value="<?= $services['id'] ?>">
+                                                        <?php if ($services['service_symbol'] == '&trade;') { ?>
+                                                            <?= __("UPS Access Point&trade; Economy") ?>
+                                                        <?php } elseif ($services['service_name'] == 'UPS Standard') { ?>
+                                                            <?= __('UPS' . $services['service_symbol'] . ' Standard') ?>
+                                                        <?php } elseif ($services['service_name'] == 'UPS Express 12:00') { ?>
+                                                            <?= __('UPS Express 12:00') ?>
+                                                        <?php } elseif ($services['service_name'] == 'UPS Ground') { ?>
+                                                            <?= __('UPS' . $services['service_symbol'] . ' Ground') ?>
+                                                        <?php } elseif ($services['service_name'] == 'UPS Next Day Air Early') { ?>
+                                                            <?= __('UPS Next Day Air' . $services['service_symbol'] . ' Early') ?>
+                                                        <?php } elseif ($services['service_name'] == 'UPS Standard - Saturday Delivery') { ?>
+                                                            <?= __('UPS' . $services['service_symbol'] . ' Standard - Saturday Delivery') ?>
+                                                        <?php } elseif ($services['service_name'] == 'UPS Express - Saturday Delivery') { ?>
+                                                            <?= __('UPS Express' . $services['service_symbol'] . '  - Saturday Delivery') ?>
+                                                        <?php } else { ?>
+                                                            <?= __($services['service_name'] . $services['service_symbol']) ?>
+                                                        <?php } ?>
+                                                        </option>
+                                                    <?php } ?>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-m-3">
+                                            <p class="text-center"><small><?= __("Rate")?></small></p>
+                                            <input data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '0-9999.99'}"
+                                                    maxlength="15" class="admin__control-text width-input" type="text"
+                                                    name="backup_rate[1][rate]" value="0">
+                                        </div>
+                                        <div class="col-m-3">
+                                            <p><br></p>
+                                            <div class="btn-minus remove-row hidden"></div>
+                                        </div>
+                                    </div>
+                                    <?php } ?>
+                                    </div>
+                                    <p class="add-row" id="add_row_backup_rate"><a href="javascript:;"><?= __("Add Backup Rate")?></a></p>
+                                    <p class="note">
+                                        <span><?= __("Backup rate will only display to e-shoppers if there is an issue within product settings, such as weights missing or if weights/dimensions exceed UPS limits")?></span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="btn_package" value="">
+                    <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+                </form>
+                <!-- begin modal confirm warning -->
+                <div id="popup-modal" class="hidden">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-body" id="popup-text-warning">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!--        <form action="--><?php //echo $block->getUrl('upsshipping/config/savePkgdimension') ?><!--" method="POST">-->
+            <input type="hidden" name="commonvalidatemessage" id="commonvalidatemessage" value="<?php echo __('Some of the data you entered is not valid. Please check again.')?>">
+            <input type="hidden" name="okmessage" id="okmessage" value="<?= __('OK') ?>">
+            <input type="hidden" name="countryCode" id="countryCode" value="<?= $selectedCountry ?>">
+            <input type="hidden" name="warningtitle" id="warningtitle" value="<?php echo __("Warning") ?>">
+            <input type="hidden" name="cancelmessage" id="cancelmessage" value="<?php echo __("Cancel") ?>">
+            <input type="hidden" name="weightvalidatemessagemax" id="weightvalidatemessagemax" value="<?php echo $messageWeightManagerMax?>">
+            <input type="hidden" name="weightwarningmessage" id="weightwarningmessage" value='<?php echo $messageWarningWeightMax; ?>'>
+            <input type="hidden" name="packagesideuserror" id="packagesideuserror" value="<?php echo $messageErrorLengthMax; ?>">
+
+            <input type="hidden" name="packagwarningmessage" id="packagwarningmessage" value='<?php echo $messageWarningWolumnMin; ?>'>
+            <input type="hidden" name="packageerrormessage" id="packageerrormessage" value="<?php echo $messageErrorVolumnMax; ?>">
+
+            <input type="hidden" name="packagweightuswarning" id="packagweightuswarning" value='<?php echo $messageWarningWeightMax; ?>'>
+            <input type="hidden" name="packagsideuswarning" id="packagsideuswarning" value='<?php echo $messageWarningWeightMin; ?>'>
+
+            <div class="admin__field page-main-actions">
+                <div class="page-actions" style="float:left">
+                    <button title="<?= __('Save') ?>" type="submit" id="btn_package_save"
+                    class="action-default scalable save primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">
+                        <span class="ui-button-text">
+                            <span><?= __('Save') ?></span>
+                        </span>
+                    </button>
+                </div>
+                <div class="page-actions">
+                    <button title="<?= __('Next') ?>" type="submit" id="btn_package_next"
+                    class="button-next action-default primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"  role="button" aria-disabled="false">
+                        <span class="ui-button-text">
+                            <span><?= __('Next') ?></span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+<!--        </form>-->
+    </div>
+</div>
+                <!-- end modal confirm warning -->
+<?php if ('us' == $selectedCountry) {
+    ?>
+    <div style="padding-top: 1em; line-height: 1.5;">
+        <div class="row">
+            <div class="col-l-12" style="color: #777;">
+                <?php echo '© ' . date("Y") .' United Parcel Service of America, Inc. <br />UPS,  the UPS Shield trademark, the UPS Ready mark, the UPS Developer Kit mark and the Color Brown are trademarks of United Parcel Service of America, Inc. All Rights Reserved.';; ?>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/pkgdimension": {}
+        }
+    }
+</script>

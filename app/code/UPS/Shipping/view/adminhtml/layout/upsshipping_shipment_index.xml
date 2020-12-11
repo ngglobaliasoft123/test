@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Shipments</title>
+        <css src="UPS_Shipping::css/openorders.css"/>
+        <css src="UPS_Shipping::css/shipments.css"/>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block name="shipping_shipment_header_nav_shipment" template="UPS_Shipping::Shipment/header_nav.phtml" />
+            <block class="UPS\Shipping\Block\Adminhtml\Shipment\Index" name="shipping_shipment_index" template="UPS_Shipping::Shipment/index.phtml" />
+            <block name="shipping_shipment_popup_shipment_layout_details" template="UPS_Shipping::Shipment/popup_shipments_layout_details.phtml" />
+            <block name="term_condition_popup" template="UPS_Shipping::Shipment/term_condition_popup.phtml" />
+        </referenceContainer>
+    </body>
+</page>

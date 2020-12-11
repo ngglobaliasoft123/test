@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Magento\Directory\Model\PriceCurrency" type="\UPS\Shipping\Plugin\Order\PriceCurrency" />
+    <type name="\Magento\Quote\Model\QuoteManagement">
+        <plugin name="handle_after_place_order" type="\UPS\Shipping\Plugin\Order\Place" sortOrder="1" />
+    </type>
+    <type name="\Magento\Framework\App\Request\CsrfValidator">
+        <plugin name="csrf_validator_skip" type="\UPS\Shipping\Plugin\CsrfValidatorSkip"/>
+    </type>
+    <type name="\Magento\OfflinePayments\Model\Cashondelivery">
+        <plugin name="disable_cash_on_delivery_plug" type="\UPS\Shipping\Plugin\CashondeliveryPlug" sortOrder="10"/>
+    </type>
+</config>

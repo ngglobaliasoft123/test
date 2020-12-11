@@ -1,0 +1,47 @@
+.marginTopCheckBox
+{
+    margin-top: -20px !important;
+}
+.marginBottomCheckBox {
+    margin-bottom: 20px !important;
+}
+.floatLeftButton {
+    float: left !important;
+}
+.contentAPI {
+    width: 100%;
+    height: 400px;
+    overflow-y: scroll;
+    border:1px solid #adadad;
+    padding: 10px;
+}
+.heightContent {
+    height: 10em;
+}
+.page-title {
+    background: url(../images/ups_logo.svg) no-repeat center left;
+    line-height: 50px;
+    text-indent: 60px;
+    background-size: 2em;
+}
+.modal-title {
+    background: url(../images/ups_logo.svg) no-repeat center left;
+    line-height: 50px;
+    text-indent: 60px;
+    background-size: 2em;
+}
+#checkbox-term-label {
+    padding-left: 0px !important;
+}
+#checkbox-term-cover {
+    margin-left: 2.6rem !important;
+}
+.admin__control-checkbox+label {
+    display: inline !important;
+}
+.popup-inner {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 0px;
+}

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Open Orders</title>
+        <css src="UPS_Shipping::css/openorders.css"/>
+        <script src="UPS_Shipping::js/edit_shipment.js"></script>
+        <script src="UPS_Shipping::js/validate.js"></script>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block name="shipping_shipment_header_nav_order" template="UPS_Shipping::Shipment/header_nav.phtml" />
+            <block class="UPS\Shipping\Block\Adminhtml\Shipment\Order" name="shipping_shipment_index" template="UPS_Shipping::Shipment/order.phtml" />
+            <block name="shipping_shipment_popup_detail_order"
+            template="UPS_Shipping::Shipment/popup_detail_order.phtml" />
+            <block class="UPS\Shipping\Block\Adminhtml\Shipment\Order"
+            name="shipping_shipment_popup_create_single_shipment"
+            template="UPS_Shipping::Shipment/popup_create_single_shipment.phtml" />
+            <block class="UPS\Shipping\Block\Adminhtml\Shipment\Order"
+            name="shipping_shipment_popup_create_batch_shipment"
+            template="UPS_Shipping::Shipment/popup_create_batch_shipment.phtml" />
+        </referenceContainer>
+    </body>
+</page>

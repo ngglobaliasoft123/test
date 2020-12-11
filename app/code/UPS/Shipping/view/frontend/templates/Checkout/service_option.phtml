@@ -1,0 +1,57 @@
+<?php
+$bingMapKey = $block->getBingMapKey();
+if ($block->isActiveUPSShipping()) {
+    $image = $block->getViewFileUrl('UPS_Shipping::images/red_pin.png');
+    $upsLogo = $block->getViewFileUrl('UPS_Shipping::images/ups_logo.svg');
+    $addressImage = $block->getViewFileUrl('UPS_Shipping::images/address.png');
+    $backendCountryCode = $block->isCountryCode();
+    $arrayLocation = \UPS\Shipping\Helper\Config::DEFAULT_LOCATION;
+    $defaultLocation = $arrayLocation[$backendCountryCode];
+    $selectedCountry = strtolower($backendCountryCode);
+?>
+    <div style="height: 0" hidden id="upsMap"></div>
+    <input type="hidden" name="searchPlaceholder" id="searchPlaceholder" value="<?php echo __('Address line, City, State, Postcode') ?>">
+    <input type="hidden" name="accessPointProcess" id="accessPointProcess" value="<?php echo __("Please select an Access Point to process"); ?>">
+    <input type="hidden" name="requiredAddress" id="requiredAddress" value="<?php echo __("The address is required"); ?>">
+    <input type="hidden" name="locationMessage" id="locationMessage" value="<?php echo __("Unable to find any locations"); ?>">
+    <input type="hidden" name="selectTitle" id="selectTitle" value="<?php echo __("Select")?>">
+    <input type="hidden" name="operatingHours" id="operatingHours" value="<?php echo __("Operating Hours"); ?>">
+    <input type="hidden" name="specifyservicemethod" id="specifyservicemethod" value="<?php echo __("Please specify a service method"); ?>">
+    <input type="hidden" name="upsLogoString" id="upsLogoString" value="<?php echo $upsLogo; ?>">
+    <input type="hidden" name="aboveaddress" id="aboveaddress" value="<?php echo __("There is no shipping service for the above address"); ?>">
+    <input type="hidden" name="backendCountryCodeKey" id="backendCountryCodeKey" value="<?php echo $backendCountryCode; ?>">
+    <input type="hidden" name="getFlagShippingFinishList" id="getFlagShippingFinishList" value="<?php echo $block->getFlagShippingFinish(); ?>">
+    <input type="hidden" name="ordershippingmethod" id="ordershippingmethod" value="<?php echo \UPS\Shipping\Helper\Config::SALES_ORDER_SHIPPING_METHOD; ?>">
+    <input type="hidden" name="deliveredaddress" id="deliveredaddress" value="<?= __("Your package will be delivered to your address"); ?>">
+    <input type="hidden" name="deliveraddresstitle" id="deliveraddresstitle" value="<?= __("Deliver to Your Address") ?>">
+    <input type="hidden" name="resultsTitle" id="resultsTitle" value="<?php echo __("Results"); ?>">
+    <input type="hidden" name="searchTitle" id="searchTitle" value="<?php echo __("Search"); ?>">
+    <input type="hidden" name="mydeliveryaddress" id="mydeliveryaddress" value="<?php echo __("Use my delivery address"); ?>">
+    <input type="hidden" name="nearTitle" id="nearTitle" value="<?php echo __("Near"); ?>">
+    <input type="hidden" name="searchAccessPointProcess" id="searchAccessPointProcess" value="<?php echo __("Search for the UPS Access Point<sup>TM</sup>"); ?>">
+    <input type="hidden" name="deliveredAccessPointProcess" id="deliveredAccessPointProcess" value="<?php if ('us' == $selectedCountry) {
+            echo __("Your package will be delivered to a UPS Access Point™ location");
+        } else {
+            echo __("Your package will be delivered to an UPS Access Point<sup>TM</sup>");
+        } ?>">
+    <input type="hidden" name="anAccessPointProcess" id="anAccessPointProcess" value="<?php if ('us' == $selectedCountry) {
+            echo __("Deliver to a UPS Access Point™ location");
+        } else {
+            echo __("Deliver to an UPS Access Point<sup>TM</sup>");
+        } ?>">
+    <input type="hidden" name="addressImageString" id="addressImageString" value="<?=$addressImage?>">
+    <input type="hidden" name="imageLinkString" id="imageLinkString" value="<?=$image?>">
+    <input type="hidden" name="arrayLocation1" id="arrayLocation1" value="<?=$defaultLocation[0]?>">
+    <input type="hidden" name="arrayLocation2" id="arrayLocation2" value="<?=$defaultLocation[1]?>">
+    <input type="hidden" name="bingMapKey" id="bingMapKey" value="<?=$bingMapKey?>">
+    <input type="hidden" name="selectedCountry" id="selectedCountry" value="<?=$selectedCountry?>">
+    <script type="text/x-magento-init">
+        {
+            "*": {
+                "UPS_Shipping/js/eshopper": {}
+            }
+        }
+    </script>
+<?php
+}
+?>

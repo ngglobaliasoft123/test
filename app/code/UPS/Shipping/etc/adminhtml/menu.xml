@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="UPS_Shipping::shipping" title="UPS Shipping" translate="title" module="UPS_Shipping" sortOrder="30" resource="UPS_Shipping::shipping"/>
+        <add id="UPS_Shipping::about" title="About" translate="title" module="UPS_Shipping" dependsOnModule="UPS_Shipping" sortOrder="0" action="upsshipping/config/about" resource="UPS_Shipping::about" parent="UPS_Shipping::shipping"/>
+
+        <add id="UPS_Shipping::config" title="Configuration" translate="title" module="UPS_Shipping" sortOrder="1" resource="UPS_Shipping::config" parent="UPS_Shipping::shipping"/>
+            <add id="UPS_Shipping::config_country" dependsOnConfig="carriers/upsshipping/show_term_condition" title="Country setting" translate="title" module="UPS_Shipping" sortOrder="2" action="upsshipping/config/country" resource="UPS_Shipping::config" parent="UPS_Shipping::config"/>
+            <add id="UPS_Shipping::config_termcondition" dependsOnConfig="carriers/upsshipping/show_term_condition" title="UPS Terms and Conditions" translate="title" module="UPS_Shipping" sortOrder="3" action="upsshipping/config/termcondition" resource="UPS_Shipping::config" parent="UPS_Shipping::config"/>
+
+            <add id="UPS_Shipping::config_account" dependsOnConfig="carriers/upsshipping/accept_term_condition" title="Account" translate="title" module="UPS_Shipping" sortOrder="11" action="upsshipping/config/account" resource="UPS_Shipping::config" parent="UPS_Shipping::config"/>
+            <add id="UPS_Shipping::config_shippingservice" dependsOnConfig="carriers/upsshipping/accept_account" title="Shipping Service" translate="title" module="UPS_Shipping" sortOrder="12" action="upsshipping/config/shippingservice" resource="UPS_Shipping::config" parent="UPS_Shipping::config"/>
+            <add id="UPS_Shipping::config_cashondelivery" dependsOnConfig="carriers/upsshipping/accept_shipping_service" title="Collect on Delivery (COD)" translate="title" module="UPS_Shipping" sortOrder="13" action="upsshipping/config/cashondelivery" resource="UPS_Shipping::config" parent="UPS_Shipping::config"/>
+            <add id="UPS_Shipping::config_package" dependsOnConfig="carriers/upsshipping/accept_cash_on_delivery" title="Package Dimensions" translate="title" module="UPS_Shipping" sortOrder="15" action="upsshipping/config/pkgdimension" resource="UPS_Shipping::config" parent="UPS_Shipping::config"/>
+            <add id="UPS_Shipping::config_deliveryrates" dependsOnConfig="carriers/upsshipping/accept_package_dimension" title="Checkout Shipping Rates" translate="title" module="UPS_Shipping" sortOrder="15" action="upsshipping/config/deliveryrates" resource="UPS_Shipping::config" parent="UPS_Shipping::config"/>
+            <add id="UPS_Shipping::config_billingpreference" dependsOnConfig="carriers/upsshipping/accept_delivery_rates" title="Complete Configuration" translate="title" module="UPS_Shipping" sortOrder="15" action="upsshipping/config/billingpreference" resource="UPS_Shipping::config" parent="UPS_Shipping::config"/>
+
+        <add id="UPS_Shipping::management" title="Shipment management" translate="title" module="UPS_Shipping" sortOrder="2" resource="UPS_Shipping::management" parent="UPS_Shipping::shipping"/>
+            <add id="UPS_Shipping::management_shipment" dependsOnConfig="carriers/upsshipping/accept_billing_preference" title="Shipment Manager" translate="title" module="UPS_Shipping" sortOrder="1" action="upsshipping/shipment/order" resource="UPS_Shipping::management" parent="UPS_Shipping::management"/>
+    </menu>
+</config>

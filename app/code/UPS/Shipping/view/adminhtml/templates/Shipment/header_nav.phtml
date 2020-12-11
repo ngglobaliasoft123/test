@@ -1,0 +1,14 @@
+<?php
+    $nameInLayout = explode('_', $block->getNameInLayout());
+    $controller = $nameInLayout[count($nameInLayout) - 1];
+?>
+
+<nav>
+    <ul class="header_tab">
+        <li class="<?php if ($controller == 'order') { echo "active";}?>">
+        <a href="<?php echo $block->getUrl('upsshipping/shipment/order')?>"><?php echo __('Open Orders')?></a></li>
+        <li class="<?php if ($controller == 'shipment') { echo "active";}?>">
+        <a href="<?php echo $block->getUrl('upsshipping/shipment/index')?>"><?php echo __('Shipments')?></a></li>
+        <li class="<?php if ($controller == 'archived') { echo "active";}?>"><a href="<?php echo $block->getUrl('upsshipping/shipment/archived')?>"><?php echo __('Archived Orders')?></a></li>
+    </ul>
+</nav>

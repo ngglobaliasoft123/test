@@ -1,0 +1,35 @@
+<div class="entry-edit form-inline">
+    <form action="<?php echo $block->getUrl('upsshipping/config/saveCountry') ?>" method="post" id="config-edit-form">
+        <fieldset class="fieldset admin__fieldset ">
+            <legend class="admin__legend legend">
+                <span><?php echo __('Country Setting') ?></span>
+            </legend>
+            <br>
+            <div class="admin__field field">
+                <label class="label admin__field-label"><span><?php echo __('Please select your country/territory') ?>
+            </span></label>
+                <div class="admin__field-control control">
+                <select id="country_id" name="country_id" class="select select admin__control-select"
+                style="width: 100%;">
+                        <?php $countryCode = $block->isCountryCode(); ?>
+                        <?php foreach($block->getListContry() as $country) {?>
+                        <option value="<?php echo $country['id']; ?>" <?php if ($country['id'] == $countryCode) {
+                            echo "selected";} ?>><?php echo $country['value']; ?></option>
+                        <?php } ?>
+                </select>
+                </div>
+            </div>
+        </fieldset>
+        <div class="admin__field page-main-actions">
+            <div class="page-actions">
+                <button type="submit" name="submit_country"
+                class="button-next action-default primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"  role="button" aria-disabled="false">
+                    <span class="ui-button-text">
+                        <span><?= __('Continue') ?></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+        <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+    </form>
+</div>

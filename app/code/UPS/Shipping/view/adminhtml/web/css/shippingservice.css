@@ -1,0 +1,46 @@
+.titleShippingService {
+    background: url(../images/shipping_service.png) no-repeat center left;
+    text-indent: 25px;
+}
+.note {
+    color: #303030;
+    font-size: 12px;
+    margin: 5px 0;
+    font-style: italic;
+}
+.admin__control-select {
+    width: 50%;
+}
+select {
+    width: 50%;
+}
+.seting-label {
+    display: inline-block;
+    line-height: 2.2rem;
+    vertical-align: middle;
+    text-align: right;
+    font-size: 1.4rem;
+    font-weight: 600;
+    padding-right: 20px;
+}
+.row {
+    padding-top: 3rem;
+}
+.page-title {
+    background: url(../images/ups_logo.svg) no-repeat center left;
+    line-height: 50px;
+    text-indent: 60px;
+    background-size: 2em;
+}
+.full-width {
+    width: 100% !important;
+}
+.align-left-50 {
+    margin-left: 50px;
+}
+.popup-inner {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 0px;
+}

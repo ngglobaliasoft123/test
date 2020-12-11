@@ -1,0 +1,16 @@
+.titleAccessorial {
+    background: url(../images/black-circle.png) no-repeat center left;
+    text-indent: 25px;
+}
+.page-title {
+    background: url(../images/ups_logo.svg) no-repeat center left;
+    line-height: 50px;
+    text-indent: 60px;
+    background-size: 2em;
+}
+.popup-inner {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 0px;
+}

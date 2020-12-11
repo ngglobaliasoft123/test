@@ -1,0 +1,15 @@
+<?php
+    $termContent = $block->getTermContent();
+?>
+<div id="popup_termcondition_config" class="hidden">
+<p><?= $termContent ?></p>
+</div>
+<input type="hidden" name="popup-termcondition-config-title" id="popup-termcondition-config-title" value="<?= __('UPS Terms and Conditions') ?>">
+<input type="hidden" name="btn-ok" id="btn-ok" value="<?= __('OK') ?>">
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/popuptermconditionconfig": {}
+        }
+    }
+</script>

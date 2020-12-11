@@ -1,0 +1,100 @@
+<?php
+    $language = 'en';
+    $allowChange = \UPS\Shipping\Helper\Config::LISTEULANGUAGES;
+    $localCode = trim($block->getAdminLanguageCode());
+    $countryBase = $block->getCountryCode();
+    $selectedCountry = $country = strtolower($countryBase);
+    if (!empty($localCode)) {
+        $arrayLanguages = explode("_", $localCode);
+        $languageCheck = trim($arrayLanguages[0]) . '_' . trim($countryBase);
+        if (in_array($languageCheck, $allowChange)) {
+            $language = $arrayLanguages[0];
+        }
+    }
+    $languageCode = $language . '_' . strtoupper($country);
+?>
+<div class="panel " id="configuration_fieldset_indexation">
+    <div class="panel-heading">
+        <div class="page-main-actions">
+            <h2 class="titleBilling" style="margin-bottom:0%"><?= __('Complete Configuration') ?></h2>
+        </div>
+    </div>
+    <form action="<?php echo $block->getUrl('upsshipping/config/savebillingpreference'); ?>" method="post">
+        <h5 class="content-bold"><?= __('You can start shipping now!') ?></h5>
+        <p class="pad-paragraph"><?= __("Click on the 'Complete Configuration' button to finish the configuration of the plug-in and start offering UPS shipping services on your website.") ?></p>
+        <br />
+        <h4 class="content-bold"><?= __('If you are new to UPS, please refer to the following FAQs for additional information:') ?></h4>
+        <p class="pad-paragraph"><?= __('1) How do I get more information about my new UPS shipping account?<br />If you opened a new UPS shipping account from the plug-in, a confirmation email with more information will be sent to the email address that you entered while creating the new account.') ?><br></p><br />
+        <p class="pad-paragraph"><?php if ('us' == $selectedCountry) {
+                echo __("2) How do I prepare my packages for UPS collection or drop off to a UPS Access Point™ location?<br />Refer to the package preparation recommendations at this link - <a href='https://www.ups.com/%1/%2/services/individual-shipper/preparing-to-ship.page' target='_blank'>https://www.ups.com/%1/%2/services/individual-shipper/preparing-to-ship.page</a>",[$country, $language]);
+            } else {
+                echo __("2) How do I prepare my packages for UPS collection or drop off to a UPS Access Point™?<br />Refer to the package preparation recommendations at this link - <a href='https://www.ups.com/%1/%2/services/individual-shipper/preparing-to-ship.page' target='_blank'>https://www.ups.com/%1/%2/services/individual-shipper/preparing-to-ship.page</a>",[$country, $language]);
+            } ?><br></p><br />
+        <p class="pad-paragraph"><?php if ('us' == $selectedCountry) {
+            echo __('3) How do I give my packages to UPS?<br />You can drop off your package at any authorized UPS location such as a UPS Access Point™ location.  Click below to search for a convenient location near you.');
+         } else {
+            echo __('3) How do I give my packages to UPS?<br />You can drop you packages at any authorized UPS location such as a UPS Access Point™. Click below to search for a convenient access point location near you.');
+         } ?><br></p>
+        <p class="pad-paragraph">
+            <a target="_blank" href="<?php echo \UPS\Shipping\Helper\Config::SEARCH_ADDRESS_POINT_URL ?>"
+            class="btn btn-default action-default"><?php if ('us' == $selectedCountry) {
+                echo __('Search locations');
+             } else {
+                echo __('Search UPS Access Point™');
+             } ?></a>
+        </p><br />
+        <p class="pad-paragraph"><?= __("You can also ask UPS to pickup packages from your warehouse or business address. If you need an occasional pickup, you can directly schedule a pickup from UPS.COM using this link - <a href='https://wwwapps.ups.com/pickup/schedule?loc=%1' target='_blank'>https://wwwapps.ups.com/pickup/schedule?loc=%1</a>",[$languageCode]) ?><br></p><br />
+        <?php if ('pl' == $country) { ?>
+        <p class="pad-paragraph"><?= __("If you have UPS packages on most business days and would prefer a regular UPS pickup, you can email a completed and signed Pickup form to the following email address - konto@ups.com. Then a UPS representative will be in touch with you to discuss a daily UPS pickup.") ?></p>
+        <p class="pad-paragraph">
+            <a target="_blank" href="<?php echo $block->getUrlRegisterFile($language); ?>" class="btn btn-default action-default">
+            <?= __('Print form') ?></a>
+        </p><br />
+        <p class="pad-paragraph"><?= __("4) What steps do I need to take to set up a UPS Collect on Delivery (COD) service?<br />You can email a completed and signed COD form to the following email address - konto@ups.com. Then a UPS representative will be in touch with you to discuss the COD service.") ?></p>
+        <p class="pad-paragraph">
+            <a target="_blank" href="<?php echo $block->getUrlCODFile($language); ?>" class="btn btn-default action-default">
+            <?= __('Print form') ?></a>
+        </p>
+        <?php } else { ?>
+            <p class="pad-paragraph"><?php if ('us' == $selectedCountry) {
+                echo __("If you have UPS packages on most business days and prefer a regular UPS pickup, please refer to this link for instructions on scheduling daily pickups: <a href='https://www.ups.com/us/en/shipping/services/value-added/daily-pickup.page' target='_blank'>https://www.ups.com/us/en/shipping/services/value-added/daily-pickup.page</a>");
+             } else {
+                echo __("If you have UPS packages on most business days and would prefer a regular UPS pickup, you can contact UPS by calling at the phone number provided under Billing Questions <a href='https://www.ups.com/%1/%2/help-center/contact.page' target='_blank'>here</a>. Then a UPS representative will be in touch with you to discuss a daily UPS pickup.",[$country, $language]);
+             } ?></p>
+            <p class="pad-paragraph"><?php if ('us' == $selectedCountry) {
+                echo __("4. What steps do I need to take to set up a UPS Collect on Delivery (COD) service?<br />If you are interested in using UPS Collect on Delivery (COD) services, please refer to this link for details: <a href='https://www.ups.com/us/en/shipping/services/value-added/cod.page' target='_blank'>https://www.ups.com/us/en/shipping/services/value-added/cod.page.</a>");
+             } else {
+                echo __("4. What steps do I need to take to set up a UPS Collect on Delivery (COD) service?<br />You can contact UPS by calling at the phone number provided under Billing Questions <a href='https://www.ups.com/%1/%2/help-center/contact.page' target='_blank'>here</a>. Then a UPS representative will be in touch with you to discuss the COD service.",[$country, $language]);
+             } ?></p>
+        <?php } ?>
+        <br/>
+        <div class="admin__field page-main-actions">
+            <div class="page-actions">
+                <button title="<?= __('Complete Configuration') ?>" type="submit"
+                class="button-next action-default primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"  role="button" aria-disabled="false">
+                    <span class="ui-button-text">
+                        <span><?= __('Complete Configuration') ?></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+        <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+    </form>
+</div>
+<?php if ('us' == $selectedCountry) {
+    ?>
+    <div style="padding-top: 1em; line-height: 1.5;">
+        <div class="row">
+            <div class="col-l-12" style="color: #777;">
+                <?php echo '© ' . date("Y") .' United Parcel Service of America, Inc. <br />UPS,  the UPS Shield trademark, the UPS Ready mark, the UPS Developer Kit mark and the Color Brown are trademarks of United Parcel Service of America, Inc. All Rights Reserved.';; ?>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/billingpreference": {}
+        }
+    }
+</script>

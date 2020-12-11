@@ -1,0 +1,350 @@
+<?php
+    $rate = $block->getDataDelivery();
+    $configData = $block->getConfigData();
+    $selectedCountry = strtolower($block->getCountryCode());
+?>
+<div class="page-main-actions">
+    <h2 style="margin-bottom:0%"><?= __('Checkout Shipping Rates') ?></h2>
+</div>
+<form action="<?php echo $block->getUrl('upsshipping/config/savedeliveryRates') ?>" method="post" id="deliveryRates">
+    <div class="row marginBottomOption">
+        <label class="col-xl-2 col-xs-3 admin__field-label marginTopCurrency">
+            <?= trim(__('Currency ')) ?>&nbsp;&nbsp;&nbsp;</label>
+        <div class="col-xl-6 col-xs-4" style="width: 35%">
+            <input type="text" class="admin__control-text widthOptionCurrency"
+            disabled value="<?= $block->getCurrencyData()?>"/>
+        </div>
+    </div>
+    <?php if (!empty($configData['AP_select_shipping'])) { ?><div class="col-xl-12 col-xs-11"><label class="iconLeft"><b>
+        <?php if ('us' == $selectedCountry) {
+            echo __('Shipping rate types:');
+            ?>
+            </b></div>
+            <div class="shipping-rate-types">
+                <?= __("1. Real time shipping rates – the merchant’s delivery rates are displayed to the e-shopper based on the default package dimensions configured in the previous screen.  The delivery rates include base transportation and fuel charges, so merchants may adjust the “% of UPS shipping rates” field to cover their common ad hoc charges.<br /><span class='left-10'>Ad hoc charges can be found in the Daily Rate and Service Guide posted here:</span><br /><span class='left-10'><a href='https://www.ups.com/us/en/shipping/daily-rates.page' target='_blank'>https://www.ups.com/us/en/shipping/daily-rates.page</a></span><br />2. Flat rates – merchants set delivery rates that display to the e-shopper based on their order value.  Orders less than or equal to the specified “order value threshold” will show the delivery rate entered for that threshold.  Any order value above the highest threshold will default to a delivery rate of $0.<br /><span class='left-10'>Example: an “order value threshold” of $50 with a delivery rate of $15 will show a delivery rate of $15 for orders less than or equal to $50 and a delivery rate of $0 for orders over $50.</span>")?>
+            </div>
+            <br />
+            <div class="col-xl-12 col-xs-11"><br /><label class="iconLeft"><b>
+            <?php
+            echo __('Ship to UPS Access Point™ location');
+        } else {
+            echo __('Ship to UPS Access Point&trade;');
+        } ?><br /></label><?php } ?>
+    <?php
+        foreach ($configData['AP_select_shipping'] as $service) {
+            if ($service['service_selected'] == 1) {
+    ?>
+        <div class="service-row">
+            <div class="row">
+                <div class="col-xl-2 col-xs-3 admin__field fontRight">
+                    <p><br></p>
+                    <?php if ($service['service_symbol'] == '&trade;') { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle">
+                            <?= __("UPS Access Point&trade; Economy") ?></span></label>
+                    <?php } elseif ($service['service_name'] == 'UPS Standard') { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle">
+                            <?= __('UPS' . $service['service_symbol'] . ' Standard'); ?></span></label>
+                    <?php } elseif ($service['service_name'] == 'UPS Express 12:00') { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle">
+                            <?= __('UPS Express 12:00'); ?></span></label>
+                    <?php } elseif ($service['service_name'] == 'UPS Ground') { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle">
+                            <?= __('UPS' . $service['service_symbol'] . ' Ground'); ?></span></label>
+                    <?php } elseif ($service['service_name'] == 'UPS Next Day Air Early') { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle">
+                            <?= __('UPS Next Day Air' . $service['service_symbol'] . ' Early'); ?></span></label>
+                    <?php } elseif ($service['service_name'] == 'UPS Standard - Saturday Delivery') { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle">
+                            <?= __('UPS' . $service['service_symbol'] . ' Standard - Saturday Delivery'); ?></span></label>
+                    <?php } elseif ($service['service_name'] == 'UPS Express - Saturday Delivery') { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle">
+                            <?= __('UPS Express' . $service['service_symbol'] . ' - Saturday Delivery'); ?></span></label>
+                    <?php } else { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle">
+                            <?= $service['service_name'].$service['service_symbol']; ?></span></label>
+                    <?php } ?>
+                </div>
+                <div class="col-xl-6 col-xs-4 admin__field-control" style="width: 35%">
+                    <p><br></p>
+                    <select class="admin__control-select select-rate-type widthOptionCurrency"
+                    name="rate_typeAP[<?= $service['id'];?>]">
+                        <option value="flat_rate" <?php if (isset($rate[$service['id']]['flat_rate'])) {
+                            echo "selected";} ?>><?= __('Flat rates') ?></option>
+                        <option value="real_time" <?php if (isset($rate[$service['id']]['real_time'])) {
+                            echo "selected";} ?>><?= __('Real time shipping rates') ?></option>
+                    </select>
+                </div>
+                <div class="col-xl-4 col-xs-5" style="width: 35%">
+                    <?php
+                        if (isset($rate[$service['id']]['flat_rate'])) {
+                            $arrayFlatRate = $rate[$service['id']]['flat_rate'];
+                            $hidden_rate = "";
+                            $hidden_real = "hidden";
+                        } elseif (isset($rate[$service['id']]['real_time'])) {
+                            $arrayFlatRate = $rate[$service['id']]['real_time'];
+                            $hidden_rate = "hidden";
+                            $hidden_real = "";
+                        } else {
+                            $arrayFlatRate = [
+                                [0, 0]
+                            ];
+                            $hidden_rate = "";
+                            $hidden_real = "hidden";
+                        }
+                        foreach($arrayFlatRate as $key => $value) {
+                            if ($value[0] == '') {
+                                $arrayFlatRate[$key][0] = 0;
+                            }
+                        }
+                    ?>
+                    <div class="flat_rate <?php echo $hidden_rate ?>">
+                        <?php
+                            $checkClass = 0;
+                            foreach($arrayFlatRate as $rowRate) {
+                                if ($rowRate[0] == '') {
+                                    $rowRate[1] = 0;
+                                }
+                        ?>
+                            <div class="row <?php if ($checkClass != 0) { ?>can-remove<?php } ?>">
+                                <div class="col-xs-1">
+                                    <?php if ($checkClass == 0) { ?><p><br></p><?php } ?>
+                                    <a href="javascript:;" class="<?= $service['service_key_delivery']; ?>">
+                                    <h2 class="titleAdd"></h2></a>
+                                </div>
+                                <div class="col-xs-5">
+                                    <?php if ($checkClass == 0) { ?><p><small style="font-size: 10px">
+                                        <?= __('Order Value Threshold') ?></small></p> <?php } ?>
+                                    <input <?php if ($hidden_rate != '') { echo "disabled";} ?>
+                                    data-validate="{'required': true, 'validate-rule': 'numberFloat',
+                                        'validate-min-max': '0-9999.99'}" maxlength="15"
+                                        class="admin__control-text min-value-flat-rate widthFlatRates"
+                                    type="text" name="minValueAP[<?= $service['id'];?>][]"
+                                    value="<?php echo $rowRate[0] ?>">
+                                </div>
+                                <div class="col-xs-5">
+                                    <?php if ($checkClass == 0) { ?><p><small style="font-size: 10px">
+                                        <?= __('Delivery rates') ?></small></p> <?php } ?>
+                                    <input <?php if ($hidden_rate != '') { echo "disabled";} ?>
+                                    data-validate="{'required': true, 'validate-rule': 'numberFloat',
+                                        'validate-min-max': '0-9999.99'}" maxlength="15"
+                                        class="admin__control-text rate-value-flat-rate widthFlatRates" type="text"
+                                        name="rateValueAP[<?= $service['id'];?>][]" value="<?php echo $rowRate[1] ?>">
+                                </div>
+                                <div class="col-xs-1 <?php if ($checkClass == 0) { ?>hidden<?php } ?>">
+                                    <?php if ($checkClass == 0) { ?><p><br></p><?php } ?>
+                                    <a href="javascript:;" class="subrow1 ic_sub"><h2 class="titleRemove"></h2></a>
+                                </div>
+                            </div>
+                        <?php
+                            $checkClass++;
+                            }
+                        ?>
+                    </div>
+                    <?php
+                    if (isset($rate[$service['id']]['real_time']) && intval($rate[$service['id']]['real_time'][0][1]) > 0) {
+                        $rateValueRealTime = $rate[$service['id']]['real_time'][0][1];
+                    } else {
+                        $rateValueRealTime = '100';
+                    }
+                    ?>
+                    <div class="real_time <?php echo $hidden_real ?> labelRealTime">
+                        <p><br></p>
+                        <label class="admin__field-label fontNormal"><span><?= __('Delivery rates is') ?></span></label>
+                        <input style="width: 24%" <?php if ($hidden_real != '') { echo "disabled";} ?>
+                        data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '1-200'}" class="admin__control-text fontRight" type="text"
+                        name="rateValueRealTimeAP[<?= $service['id']; ?>]" value="<?php echo $rateValueRealTime ?>">
+                        <label class="admin__field-label fontNormal"><?= __('% of UPS shipping rates') ?></label>
+                    </div>
+                </div>
+            </div>
+            <?php if ('us' != $selectedCountry) { ?>
+            <div class="row <?php echo $hidden_real?> text_real_time">
+                <div class="col-xl-2 col-xs-3"></div>
+                <div class="col-xl-10 col-xs-9">
+                    <small style="font-size: 10px">
+                        <?= __('The e-shopper will see the % of real time UPS rates. These rates are calculated using the default package weight and dimensions that you configured in the previous screen (Package Dimensions).')?>
+                        <br/><?= __("Please Note:<br />1. UPS real time shipping rates are exclusive of VAT. If you want to display the rates including VAT, please add the VAT % to the shipping rate. E.g. If VAT is 23%, and you want to display rates including VAT, you should insert 123% above.<br />2. The e-shopper may select COD as a payment option within the Magento checkout after the shipping rates are calculated. In this scenario, UPS COD surcharges which will be billed, are not added to the displayed shipping rates automatically. This is due to the order in which Magento displays shipping and payment options.")?>
+                    </small>
+                </div>
+            </div>
+            <?php } ?>
+        </div>
+    <?php
+            }
+        }
+    ?>
+    <?php if (!empty($configData['ADD_select_shipping'])) { ?><label class="iconLeft"><b><?= __('Ship to Address') ?>
+    </b></label><?php } ?>
+    <?php
+        foreach ($configData['ADD_select_shipping'] as $service) {
+            if ($service['service_selected'] == 1) {
+    ?>
+        <div class="service-row">
+            <div class="row">
+                <div class="col-xl-2 col-xs-3 admin__field fontRight">
+                    <p><br></p>
+                    <?php if ($service['service_name'] == 'UPS Standard') { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle"><?= __('UPS' .$service['service_symbol'] . ' Standard'); ?></span></label>
+                    <?php } else if ($service['service_name'] == 'UPS Express 12:00') { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle"><?= __('UPS Express 12:00'); ?></span></label>
+                    <?php } else if ($service['service_name'] == 'UPS Ground') { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle"><?= __('UPS' .$service['service_symbol'] . ' Ground'); ?></span></label>
+                    <?php } else if ($service['service_name'] == 'UPS Next Day Air Early') { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle"><?= __('UPS Next Day Air' .$service['service_symbol'] . ' Early'); ?></span></label>
+                    <?php } elseif ($service['service_name'] == 'UPS Standard - Saturday Delivery') { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle"><?= __('UPS' . $service['service_symbol'] . ' Standard - Saturday Delivery'); ?></span></label>
+                    <?php } elseif ($service['service_name'] == 'UPS Express - Saturday Delivery') { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle"><?= __('UPS Express' . $service['service_symbol'] . ' - Saturday Delivery'); ?></span></label>
+                    <?php } else { ?>
+                        <label class="admin__field-label fontNormal"><span class="labelTitle"><?= $service['service_name'] .$service['service_symbol']; ?></span></label>
+                    <?php } ?>
+                </div>
+                <div class="col-xl-6 col-xs-4 admin__field-control" style="width: 35%">
+                    <p><br></p>
+                    <select class="admin__control-select select-rate-type widthOptionCurrency"
+                    name="rate_typeADD[<?= $service['id']; ?>]">
+                        <option value="flat_rate" <?php if (isset($rate[$service['id']]['flat_rate'])) {
+                            echo "selected";} ?>><?= __('Flat rates') ?></option>
+                        <option value="real_time" <?php if (isset($rate[$service['id']]['real_time'])) {
+                            echo "selected";} ?>><?= __('Real time shipping rates') ?></option>
+                    </select>
+                </div>
+                <div class="col-xl-4 col-xs-5" style="width: 35%">
+                    <?php
+                        if (isset($rate[$service['id']]['flat_rate'])) {
+                            $arrayFlatRate = $rate[$service['id']]['flat_rate'];
+                            $hidden_rate = "";
+                            $hidden_real = "hidden";
+                        } elseif (isset($rate[$service['id']]['real_time'])) {
+                            $arrayFlatRate = $rate[$service['id']]['real_time'];
+                            $hidden_rate = "hidden";
+                            $hidden_real = "";
+                        } else {
+                            $arrayFlatRate = [
+                                [0, 0]
+                            ];
+                            $hidden_rate = "";
+                            $hidden_real = "hidden";
+                        }
+                        foreach($arrayFlatRate as $key => $value) {
+                            if ($value[0] == '') {
+                                $arrayFlatRate[$key][0] = 0;
+                            }
+                        }
+                    ?>
+                    <div class="flat_rate <?php echo $hidden_rate ?>">
+                        <?php
+                            $checkClass = 0;
+                            foreach($arrayFlatRate as $rowRate) {
+                                if ($rowRate[0] == '') {$rowRate[1] = 0;}
+                        ?>
+                            <div class="row <?php if ($checkClass != 0) { ?>can-remove<?php } ?>">
+                                <div class="col-xs-1">
+                                    <?php if ($checkClass == 0) { ?><p><br></p><?php } ?>
+                                    <a href="javascript:;" class="<?= $service['service_key_delivery'];?>"><h2
+                                    class="titleAdd"></h2></a>
+                                </div>
+                                <div class="col-xs-5">
+                                    <?php if ($checkClass == 0) { ?><p><small style="font-size: 10px">
+                                        <?= __('Order Value Threshold')?></small></p> <?php } ?>
+                                    <input <?php if ($hidden_rate != '') { echo "disabled";} ?>
+                                    data-validate="{'required': true, 'validate-rule': 'numberFloat',
+                                        'validate-min-max': '0-9999.99'}" maxlength="15"
+                                        class="admin__control-text min-value-flat-rate widthFlatRates" type="text"
+                                        name="minValueADD[<?= $service['id']; ?>][]" value="<?php echo $rowRate[0] ?>">
+                                </div>
+                                <div class="col-xs-5">
+                                    <?php if ($checkClass == 0) { ?><p><small style="font-size: 10px">
+                                        <?= __('Delivery rates')?></small></p> <?php } ?>
+                                    <input <?php if ($hidden_rate != '') { echo "disabled";} ?>
+                                    data-validate="{'required': true, 'validate-rule': 'numberFloat',
+                                        'validate-min-max': '0-9999.99'}" maxlength="15"
+                                        class="admin__control-text rate-value-flat-rate widthFlatRates" type="text"
+                                        name="rateValueADD[<?= $service['id']; ?>][]" value="<?php echo $rowRate[1] ?>">
+                                </div>
+                                <div class="col-xs-1 <?php if ($checkClass == 0) { ?>hidden<?php } ?>">
+                                    <?php if ($checkClass == 0) { ?><p><br></p> <?php } ?>
+                                    <a href="javascript:;" class="subrow1 ic_sub"><h2 class="titleRemove"></h2></a>
+                                </div>
+                            </div>
+                        <?php
+                            $checkClass++;
+                            }
+                        ?>
+                    </div>
+                    <?php
+                    if (isset($rate[$service['id']]['real_time']) && intval($rate[$service['id']]['real_time'][0][1]) > 0) {
+                        $rateValueRealTime = $rate[$service['id']]['real_time'][0][1];
+                    } else {
+                        $rateValueRealTime = '100';
+                    }
+                    ?>
+                    <div class="real_time <?php echo $hidden_real ?> labelRealTime">
+                        <p><br></p>
+                        <label class="admin__field-label fontNormal"><span><?= __('Delivery rates is') ?></span></label>
+                        <input style="width: 24%" <?php if ($hidden_real != '') { echo "disabled";} ?>
+                        data-validate="{'required': true, 'validate-rule': 'numberFloat', 'validate-min-max': '1-200'}" class="admin__control-text fontRight" type="text"
+                        name="rateValueRealTimeADD[<?= $service['id']; ?>]" value="<?php echo $rateValueRealTime ?>">
+                        <label class="admin__field-label fontNormal"><?= __('% of UPS shipping rates') ?></label>
+                    </div>
+                </div>
+            </div>
+            <?php if ('us' != $selectedCountry) { ?>
+            <div class="row <?php echo $hidden_real ?> text_real_time">
+                <div class="col-xl-2 col-xs-3"></div>
+                <div class="col-xl-10 col-xs-9">
+                    <small style="font-size: 10px">
+                        <?= __('The e-shopper will see the % of real time UPS rates. These rates are calculated using the default package weight and dimensions that you configured in the previous screen (Package Dimensions).') ?>
+                        <br/>
+                        <?= __("Please Note:<br />1. UPS real time shipping rates are exclusive of VAT. If you want to display the rates including VAT, please add the VAT % to the shipping rate. E.g. If VAT is 23%, and you want to display rates including VAT, you should insert 123% above.<br />2. The e-shopper may select COD as a payment option within the Magento checkout after the shipping rates are calculated. In this scenario, UPS COD surcharges which will be billed, are not added to the displayed shipping rates automatically. This is due to the order in which Magento displays shipping and payment options.") ?>
+                    </small>
+                </div>
+            </div>
+            <?php } ?>
+        </div>
+    <?php
+            }
+        }
+    ?>
+    <div class="admin__field page-main-actions">
+        <div class="page-actions" style="float: left;">
+            <button type="submit" name="submit" value="save" id="button_save_delivery_rates"
+            class="button-next action-default primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+            role="button" aria-disabled="false" style="margin-left: 0;">
+                <span class="ui-button-text">
+                    <span><?= __('Save') ?></span>
+                </span>
+            </button>
+        </div>
+        <div class="page-actions">
+            <button type="submit" name="submit" value="next" id="button_next"
+            class="button-next action-default primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"
+            role="button" aria-disabled="false">
+                <span class="ui-button-text">
+                    <span><?= __('Next') ?></span>
+                </span>
+            </button>
+        </div>
+    </div>
+    <input type="hidden" name="noteMessage" id="noteMessage" value="<?= __('Some of the data you entered is not valid. Please check again.') ?>">
+    <input type="hidden" name="commonvalidatemessage" id="commonvalidatemessage" value="<?php echo __('Some of the data you entered is not valid. Please check again.')?>">
+    <input type="hidden" name="miniumMessage" id="miniumMessage" value="<?= __('The minimum thresholds can not be the same.') ?>">
+    <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+</form>
+<?php if ('us' == $selectedCountry) {
+    ?>
+    <div style="padding-top: 1em; line-height: 1.5;">
+        <div class="row">
+            <div class="col-l-12" style="color: #777;">
+                <?php echo '© ' . date("Y") .' United Parcel Service of America, Inc. <br />UPS,  the UPS Shield trademark, the UPS Ready mark, the UPS Developer Kit mark and the Color Brown are trademarks of United Parcel Service of America, Inc. All Rights Reserved.';; ?>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/deliveryrates": {}
+        }
+    }
+</script>

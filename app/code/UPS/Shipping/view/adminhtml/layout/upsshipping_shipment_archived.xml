@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Archived Orders</title>
+        <css src="UPS_Shipping::css/openorders.css"/>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block name="shipping_shipment_header_nav_archived" template="UPS_Shipping::Shipment/header_nav.phtml" />
+            <block class="UPS\Shipping\Block\Adminhtml\Shipment\Archived" name="shipping_shipment_index" template="UPS_Shipping::Shipment/archived.phtml" />
+            <block name="shipping_shipment_popup_detail_order"
+            template="UPS_Shipping::Shipment/popup_detail_order.phtml" />
+
+        </referenceContainer>
+    </body>
+</page>

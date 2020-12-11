@@ -1,0 +1,105 @@
+<?php
+    $dataAPI = $block->callAPILicense();
+    $language = 'en';
+    $localCode = trim($block->getAdminLanguageCode());
+    if (!empty($localCode)) {
+        $arrayLanguages = explode("_", $localCode);
+        $language = $arrayLanguages[0];
+    }
+    $selectedCountry = $country = strtolower($block->getCountryCode());
+    $errorMessage = __('Connection error, try later to install and configure');
+    if (isset($dataAPI->AccessLicenseAgreementResponse->AccessLicenseText)) {
+        $accessLicenseText = $dataAPI->AccessLicenseAgreementResponse->AccessLicenseText;
+        if (in_array($language, \UPS\Shipping\Helper\Config::ARRAYLANGUAGECODE) || ($language == 'fr' && $country == 'be')) {
+            $accessLicenseText = iconv(mb_detect_encoding($accessLicenseText, mb_detect_order(), true), "ISO-8859-1", $accessLicenseText);
+        }
+        $showButton = true;
+    } else {
+        if (!empty($dataAPI)) {
+            $dataAPI = json_decode($dataAPI);
+            if (isset($dataAPI->errorHandshake) && ($dataAPI->errorHandshake)) {
+                $errorMessage = __('Some required Online Configuration Services are currently not available. Please try to configure your UPS module later.');
+            }
+        } else {
+            $errorMessage = __('Some required Online Configuration Services are currently not available.');
+        }
+        $accessLicenseText = "";
+        $showButton = false;
+    }
+?>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/termcondition": {}
+        }
+    }
+</script>
+<form action="<?php echo $block->getUrl('upsshipping/config/saveTermCondition') ?>" method="post">
+    <?php if (!$showButton) { ?>
+        <div id="messages">
+            <div class="messages">
+                <div class="message message-error error">
+                    <div data-ui-id="messages-message-error">
+                        <?php echo $errorMessage ?></div>
+                </div>
+            </div>
+        </div>
+    <?php } ?>
+    <div id="dvContainer">
+        <div class="page-main-actions" style="margin-bottom:0 !important">
+            <div class="admin__field">
+                <p id="title_print_1"><?= __('UPS Terms and Conditions') ?></p>
+                <div class="admin__field-control">
+                    <div id="content_print_1" class="contentAPI"><?php echo $accessLicenseText; ?></div>
+                </div>
+            </div>
+        </div>
+        <div class="page-columns">
+            <div class="page-main-actions" style="margin-bottom:0 !important">
+                <div class="store-switcher store-view" id="checkbox-term-cover">
+                    <input <?php if ($showButton==false) {echo 'disabled';} ?>  type="checkbox"
+                    class="admin__control-checkbox" id="accept_term_condition" name="accept_term_condition"
+                    value="1" <?php if ($block->isAcceptTermCondition()) { echo "checked";}?>>
+                    <label <?php if ($showButton==false) {echo 'style="opacity: 0.6"';} ?> for="accept_term_condition" id="checkbox-term-label" class="admin__field-label">
+                    <?php if ('pl' == $country) { ?>
+                        <?= __("I confirm that I have been given enough time to read and understand the UPS Technology Agreement (“UTA”) above and the License and Data Service Terms (“License Terms”) [Click <a href='https://www.ups.com/assets/resources/media/ups-license-and-data-service-terms.pdf' target='_blank'>here</a> to view terms] for UPS Shipping and UPS Access Point™: Official Extension (“Module”). I hereby agree the UTA contains important terms about my use of UPS Technology (as defined therein) and the License Terms contain important terms about my use of and exchange of information with UPS through the Module, in each case including terms such as limiting UPS’s liability and my agreement on how disputes between UPS and me will be handled.") ?>
+                    <?php } else { ?>
+                        <?= __("I agree to the UPS Technology Agreement and confirm that I've been given enough time to read it and understand that it contains important terms about my use of UPS Technologies,") . __(" like") . __(" limiting UPS's liability and my agreement on how disputes between UPS and me will be handled")?>
+                    <?php } ?>
+                    </label>
+                </div>
+            </div>
+            <div class="admin__field page-main-actions" style="margin-bottom:0 !important">
+                <div class="page-actions" style="float: left;">
+                    <button type="submit" name="button_save_term_condition" id="button_save_term_condition" disabled
+                    class="button-next action-default primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"  role="button" aria-disabled="false" style="margin-left: 0;">
+                        <span class="ui-button-text">
+                            <span><?= __('Continue') ?></span>
+                        </span>
+                    </button>
+                </div>
+                <div class="page-actions">
+                    <button type="button" id="btnPrint" <?php if (!$showButton) { echo "disabled";}?>
+                    class="button-next action-default primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"  role="button" aria-disabled="false">
+                        <span class="ui-button-text">
+                            <span><?= __('Print') ?></span>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="showbuttontitle" id="showbuttontitle" value="<?php echo $showButton ?>">
+    <input type="hidden" name="upstermcondition" id="upstermcondition" value="<?php echo __("UPS Terms and Conditions")?>">
+    <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+</form>
+<?php if ('us' == $selectedCountry) {
+    ?>
+    <div style="padding-top: 1em; line-height: 1.5;">
+        <div class="row">
+            <div class="col-l-12" style="color: #777;">
+                <?php echo '© ' . date("Y") .' United Parcel Service of America, Inc. <br />UPS,  the UPS Shield trademark, the UPS Ready mark, the UPS Developer Kit mark and the Color Brown are trademarks of United Parcel Service of America, Inc. All Rights Reserved.';; ?>
+            </div>
+        </div>
+    </div>
+<?php } ?>

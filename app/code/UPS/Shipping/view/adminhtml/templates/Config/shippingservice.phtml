@@ -1,0 +1,429 @@
+<?php
+    $Service = $block->getConfigData();
+    $selectedCountry = $country = strtolower($block->getCountryCode());
+    $radioAdultSignature = $block->getAdultSignature();
+    $us_default = 1;
+    if ('us' != $selectedCountry) {
+        $us_default = 0;
+    }
+    if (!empty($Service['AP_select_shipping']) && (1 == $us_default)) {
+        foreach($Service['AP_select_shipping'] as $item) {
+            if (1 == intval($item['service_selected'])) {
+                $us_default = 0;
+                break;
+            }
+        }
+    }
+
+    if (!empty($Service['ADD_select_shipping']) && (1 == $us_default)) {
+        foreach($Service['ADD_select_shipping'] as $item) {
+            if (1 == intval($item['service_selected'])) {
+                $us_default = 0;
+                break;
+            }
+        }
+    }
+?>
+<form class="form" action="<?php echo $block->getUrl('upsshipping/config/saveshippingservice') ?>" method="post">
+    <div class="entry-edit form-inline">
+        <div class="page-main-actions">
+            <h2 class="titleShippingService" style="margin-bottom:0%"><?= __('Shipping Services') ?></h2>
+        </div>
+        <div class="fieldset-wrapper">
+            <div class="admin__fieldset-wrapper-content _hide">
+                <fieldset class="admin__fieldset" style="padding-bottom: 0px;padding-top:0px" class="wrapper">
+                    <div class="admin__field" style="margin-bottom: 0px;">
+                        <div class="admin__field-control full-width">
+                            <p class="align-left-50"><span><?= __("Select the UPS services you want to be visible in the checkout for your e-shoppers. To learn more about UPS services, refer UPS Tariff/Terms and Conditions of Service on UPS.COM") ?></span></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-m-4 seting-label"  for="to_ap_delivery" >
+                        <?php if ('us' == $selectedCountry) { ?>
+                            <span><b><?= __("Ship to a UPS Access Point™ location (to-AP delivery)") ?></b></span>
+                        <?php } else { ?>
+                            <span><b><?= __("Deliver to UPS Access Point™ (to-AP delivery)") ?></b></span>
+                        <?php } ?>
+                        </label>
+                        <div class="col-m-6">
+                            <div class="admin__actions-switch" data-role="switcher">
+                                <input type="checkbox" class="admin__actions-switch-checkbox" id="to_ap_delivery"
+                                name="configAP[<?php
+                                echo \UPS\Shipping\Helper\Config::SERVICE_UPS_SHIPPING_DELIVERY_TO_ACCESS_POINT ?>]"
+                                <?php if ($Service['to_ap_delivery']=="1" || (empty($Service['to_ap_delivery']) && 'us' == $selectedCountry && 1 == $us_default)) {echo "checked";} ?>>
+                                <label class="admin__actions-switch-label" for="to_ap_delivery">
+                                    <span class="admin__actions-switch-text" data-text-on="<?= __("Yes") ?>"
+                                    data-text-off="<?= __("No") ?>"></span>
+                                </label>
+                            </div>
+                            <p class="note"><span>
+                                <?php  if ('us' == $selectedCountry) {
+                                    echo __("UPS delivers the parcel to a UPS Access Point location selected by the customer for them to collect at their convenience");
+                                 } else {
+                                    echo __("UPS delivers the parcel to a UPS Access Point™ that the customer selected, then customer picks up their order there");
+                                    } ?></span></p>
+                        </div>
+                    </div>
+                    <div class="open-form-ap">
+                        <div class="row">
+                            <label class="col-m-4 seting-label" for="default_shipping">
+                                <span><?= __("Set as default shipping option") ?></span>
+                            </label>
+                            <div class="col-m-8">
+                                <div class="admin__actions-switch" data-role="switcher">
+                                    <input type="checkbox" class="admin__actions-switch-checkbox"
+                                    id="default_shipping" name="configAP[<?php echo \UPS\Shipping\Helper\Config::SERVICE_UPS_SHIPPING_DELIVERY_SET_DEFAULT ?>]"
+                                    <?php if ($Service['default_shipping']=="1") {echo "checked";} ?>>
+                                    <label class="admin__actions-switch-label" for="default_shipping">
+                                        <span class="admin__actions-switch-text" data-text-on="<?= __("Yes") ?>"
+                                        data-text-off="<?= __("No") ?>"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label  class="col-m-4 seting-label">
+                                <span><b><?= __("Select the shipping services for your customers to choose") ?></b>
+                            </span>
+                            </label>
+                            <div class="col-m-8">
+                                <?php foreach($Service['AP_select_shipping'] as $AP_select_shipping) {
+                                    $endUS = '';
+                                    if ($country == 'us') {
+                                        if (in_array($AP_select_shipping['rate_code'], \UPS\Shipping\Helper\Config::ARRAYRATECODE)) {
+                                            $endUS = __(' (to international)');
+                                        } else {
+                                            $endUS = __(' (to US)');
+                                        }
+                                    }
+                                    ?>
+                                    <div class="admin__field">
+                                        <div class="admin__field-control">
+                                            <div class="admin__field admin__field-option">
+                                                <input <?php if ($AP_select_shipping['service_selected']==1 || (empty($AP_select_shipping['service_selected']) && 'us' == $selectedCountry && 1 == $us_default)) {
+                                                    echo 'checked';} ?> type="checkbox" class="admin__control-checkbox"
+                                                    id="<?= $AP_select_shipping['service_key'] ?>"
+                                                    name="serviceAP[]" value="<?= $AP_select_shipping['id'] ?>">
+                                                <?php if ($AP_select_shipping['service_symbol'] == '&trade;') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $AP_select_shipping['service_key'] ?>">
+                                                    <?= __("UPS Access Point&trade; Economy") . $endUS ?></label>
+                                                <?php } elseif ($AP_select_shipping['service_name'] == 'UPS Standard') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $AP_select_shipping['service_key'] ?>">
+                                                    <?= __('UPS' . $AP_select_shipping['service_symbol'] . ' Standard') . $endUS ?></label>
+                                                <?php } elseif ($AP_select_shipping['service_name'] == 'UPS Express 12:00') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $AP_select_shipping['service_key'] ?>">
+                                                    <?= __('UPS Express 12:00') . $endUS ?></label>
+                                                <?php } elseif ($AP_select_shipping['service_name'] == 'UPS Ground') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $AP_select_shipping['service_key'] ?>">
+                                                    <?= __('UPS' . $AP_select_shipping['service_symbol'] . ' Ground') . $endUS ?></label>
+                                                <?php } elseif ($AP_select_shipping['service_name'] == 'UPS Next Day Air Early') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $AP_select_shipping['service_key'] ?>">
+                                                    <?= __('UPS Next Day Air' . $AP_select_shipping['service_symbol'] . ' Early') . $endUS ?></label>
+                                                <?php } elseif ($AP_select_shipping['service_name'] == 'UPS Standard - Saturday Delivery') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $AP_select_shipping['service_key'] ?>">
+                                                    <?= __('UPS' . $AP_select_shipping['service_symbol'] . ' Standard - Saturday Delivery') . $endUS ?></label>
+                                                <?php } elseif ($AP_select_shipping['service_name'] == 'UPS Express - Saturday Delivery') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $AP_select_shipping['service_key'] ?>">
+                                                    <?= __('UPS Express' . $AP_select_shipping['service_symbol'] . '  - Saturday Delivery') . $endUS ?></label>
+                                                <?php } else { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $AP_select_shipping['service_key'] ?>">
+                                                    <?= __($AP_select_shipping['service_name'] . $AP_select_shipping['service_symbol']) . $endUS ?></label>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                        <?php if ($AP_select_shipping['rate_code']=="08" && $country !== 'us') { ?>
+                                        <p class="note"><span>
+                                            <?= __("International shipping only - visible, when shipping address is outside of EU") ?></span></p>
+                                        <?php } ?>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label  class="col-m-4 seting-label" >
+                                <span><b><?= __("Access Point display setting:") ?></b></span>
+                            </label>
+                        </div>
+                        <?php if ('us' == $selectedCountry) { ?>
+                            <div class="row">
+                                <label  class="col-m-4 seting-label" >
+                                    <span><?= __("Do any of your orders require Adult Signatures?:") ?></span>
+                                </label>
+                                <div class="col-m-8">
+                                    <div class="admin__actions-switch" data-role="switcher">
+                                        <input type="checkbox" class="admin__actions-switch-checkbox"
+                                        id="radioAdultSignature" name="configAP[<?php
+                                echo \UPS\Shipping\Helper\Config::ADULT_SIGNATURE ?>]"
+                                        <?php if (intval($radioAdultSignature) == 1) {echo "checked";} ?>>
+                                        <label class="admin__actions-switch-label" for="radioAdultSignature">
+                                            <span class="admin__actions-switch-text" data-text-on="<?= __("Yes") ?>"
+                                            data-text-off="<?= __("No") ?>"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php } ?>
+                        <div class="row">
+                            <label  class="col-m-4 seting-label" >
+                                <span><?php if ('us' == $selectedCountry) {
+                                     echo __("Number of locations visible to customers:");
+                                 } else {
+                                    echo __("Number of Access Points visible to customers:");
+                                 } ?></span>
+                            </label>
+                            <div class="col-m-8">
+                                <select class="select admin__control-select" name="configAP[<?php echo \UPS\Shipping\Helper\Config::SERVICE_UPS_SHIPPING_NUMBER_OF_ACCESS_POINT_AVAIABLE?>]" id="chosen_number_of_access">
+                                    <?php
+                                    if (in_array($Service['chosen_number_of_access'],
+                                    $Service['option_chosen_number_of_access'])) {
+                                        $value_check = $Service['chosen_number_of_access'];
+                                    } else {
+                                        $value_check = 5;
+                                    }
+                                    foreach($Service['option_chosen_number_of_access'] as $numberofaccess) {?>
+                                        <option value="<?= $numberofaccess?>" <?php if ($value_check==$numberofaccess) {
+                                            echo "selected";}?>><?= $numberofaccess ?></option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label  class="col-m-4 seting-label"  >
+                                <span><?php if ('us' == $selectedCountry) {
+                                    echo __("Display all the locations in range of:");
+                                 } else {
+                                    echo __("Display all the Access Points in range of:");
+                                 } ?></span>
+                            </label>
+                            <div class="col-m-8">
+                                <select class="select admin__control-select" name="configAP[<?php echo \UPS\Shipping\Helper\Config::SERVICE_UPS_SHIPPING_DISPLAY_ALL_ACCESS_POINT_IN_RANGE?>]" id="chosen_display_all">
+                                    <?php
+                                    if (in_array($Service['chosen_display_all'],
+                                    $Service['option_chosen_display_all'])) {
+                                        $value_check = $Service['chosen_display_all'];
+                                    } else {
+                                        $value_check = 10;
+                                    };
+                                    foreach($Service['option_chosen_display_all'] as $displayall) {?>
+                                        <option value="<?= $displayall?>" <?php if ($value_check==$displayall) {
+                                            echo "selected";}?>><?= $displayall ?></option>
+                                    <?php } ?>
+                                </select>
+                                <p class="note"><span><?php if ('us' == $selectedCountry) {
+                                    echo __("Miles around consignee's selected address");
+                                 } else {
+                                    echo __("kilometer around consignee's selected address");
+                                 } ?></span>
+                            </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label  class="col-m-4 seting-label" >
+                                <span><b><?= __("Choose Account Number for this option") ?></b></span>
+                            </label>
+                            <div class="col-m-8">
+                                <select class="select admin__control-select" name="configAP[<?php echo \UPS\Shipping\Helper\Config::SERVICE_UPS_SHIPPING_CHOOSE_ACCOUNT_NUMBER_AP ?>]"
+                                id="chosen_account_number_1">
+                                    <?php foreach($Service['List_Account'] as $key => $value) { ?>
+                                        <option <?php if ($Service['choose_account_number_ap']==$value['account_id']) {
+                                            echo "selected";} ?> value="<?=$value['account_id'] ?>">
+                                            <?= $value['address_type'] ?> (<?= $value['ups_account_number'] ?>)
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label  class="col-m-4 seting-label" ></label>
+                        <div class="col-m-8">
+                            <div class="fieldset-wrapper-title" tabindex="0" data-state-collapsible="open">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label  class="col-m-4 seting-label"  for="to_address_delivery">
+                            <span><b><?= __("Deliver to consignee address (to-address delivery)") ?></b></span>
+                        </label>
+                        <div class="col-m-8">
+                            <div class="admin__actions-switch" data-role="switcher">
+                                <input type="checkbox" class="admin__actions-switch-checkbox" id="to_address_delivery"
+                                name="configADD[<?php
+                                echo \UPS\Shipping\Helper\Config::SERVICE_UPS_SHIPPING_DELIVERY_TO_SHIPPING_ADDRESS?>]"
+                                <?php if ($Service['to_address_delivery']=="1" || (empty($Service['to_address_delivery']) && 'us' == $selectedCountry && 1 == $us_default)) {echo "checked";} ?>>
+                                <label class="admin__actions-switch-label" for="to_address_delivery">
+                                    <span class="admin__actions-switch-text" data-text-on="<?= __("Yes") ?>"
+                                    data-text-off="<?= __("No") ?>"></span>
+                                </label>
+                            </div>
+                            <p class="note"><span>
+                                <?= __("UPS delivers the parcel to the shipping address provided by customer.") ?>
+                            </span></p>
+                        </div>
+                    </div>
+                    <div class="open-form-add">
+                        <div class="row">
+                            <label  class="col-m-4 seting-label" >
+                                <span><b><?= __("Select the shipping services for your customers to choose") ?></b>
+                            </span>
+                            </label>
+                            <div class="col-m-8">
+                                <?php foreach($Service['ADD_select_shipping'] as $ADD_select_shipping) {
+                                    $endADDUS = '';
+                                    if ($country == 'us') {
+                                        if (in_array($ADD_select_shipping['rate_code'], \UPS\Shipping\Helper\Config::ARRAYRATECODE)) {
+                                            $endADDUS = __(' (to international)');
+                                        } else {
+                                            $endADDUS = __(' (to US)');
+                                        }
+                                    }
+                                    ?>
+                                    <div class="admin__field">
+                                        <div class="admin__field-control">
+                                            <div class="admin__field admin__field-option">
+                                                <input <?php if ($ADD_select_shipping['service_selected']==1 || (empty($ADD_select_shipping['service_selected']) && 'us' == $selectedCountry && 1 == $us_default)) {
+                                                    echo 'checked';} ?> type="checkbox" class="admin__control-checkbox"
+                                                    id="<?= $ADD_select_shipping['service_key'] ?>"
+                                                    name="serviceADD[]" value="<?= $ADD_select_shipping['id'] ?>">
+                                                <?php if ($ADD_select_shipping['service_symbol'] == '&trade;') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $ADD_select_shipping['service_key'] ?>">
+                                                    <?= __("UPS Access Point&trade; Economy") . $endADDUS ?></label>
+                                                <?php } elseif ($ADD_select_shipping['service_name'] == 'UPS Standard') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $ADD_select_shipping['service_key'] ?>">
+                                                    <?= __('UPS' . $ADD_select_shipping['service_symbol'] . ' Standard') . $endADDUS ?></label>
+                                                <?php } elseif ($ADD_select_shipping['service_name'] == 'UPS Standard - Saturday Delivery') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $ADD_select_shipping['service_key'] ?>">
+                                                    <?= __('UPS' . $ADD_select_shipping['service_symbol'] . ' Standard - Saturday Delivery') . $endADDUS ?></label>
+                                                <?php } elseif ($ADD_select_shipping['service_name'] == 'UPS Express - Saturday Delivery') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $ADD_select_shipping['service_key'] ?>">
+                                                    <?= __('UPS Express' . $ADD_select_shipping['service_symbol'] . ' - Saturday Delivery') . $endADDUS ?></label>
+                                                <?php } elseif ($ADD_select_shipping['service_name'] == 'UPS Express 12:00') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $ADD_select_shipping['service_key'] ?>">
+                                                    <?= __('UPS Express 12:00') . $endADDUS ?></label>
+                                                <?php } elseif ($ADD_select_shipping['service_name'] == 'UPS Ground') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $ADD_select_shipping['service_key'] ?>">
+                                                    <?= __('UPS' . $ADD_select_shipping['service_symbol'] . ' Ground') . $endADDUS ?></label>
+                                                <?php } elseif ($ADD_select_shipping['service_name'] == 'UPS Next Day Air Early') { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $ADD_select_shipping['service_key'] ?>">
+                                                    <?= __('UPS Next Day Air' . $ADD_select_shipping['service_symbol'] . ' Early') . $endADDUS ?></label>
+                                                <?php } else { ?>
+                                                    <label class="admin__field-label"
+                                                    for="<?= $ADD_select_shipping['service_key'] ?>">
+                                                    <?= __($ADD_select_shipping['service_name'] . $ADD_select_shipping['service_symbol']) . $endADDUS ?></label>
+                                                <?php } ?>
+                                            </div>
+                                        </div>
+                                        <?php if ($ADD_select_shipping['rate_code']=="08" && $country !== 'us') { ?>
+                                        <p class="note"><span><?= __("International shipping only - visible, when shipping address is outside of EU") ?></span></p>
+                                        <?php } ?>
+                                    </div>
+                                <?php } ?>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <label class="col-m-4 seting-label" >
+                                <span><b><?= __("Choose Account Number for this option") ?></b></span>
+                            </label>
+                            <div class="col-m-8">
+                                <select class="select admin__control-select" name="configADD[<?php echo \UPS\Shipping\Helper\Config::SERVICE_UPS_SHIPPING_CHOOSE_ACCOUNT_NUMBER_ADD?>]"
+                                id="chosen_account_number_2">
+                                    <?php foreach($Service['List_Account'] as $key => $value) { ?>
+                                        <option <?php if ($Service['choose_account_number_add']==$value['account_id']) {
+                                            echo "selected";} ?> value="<?=$value['account_id'] ?>">
+                                            <?= $value['address_type'] ?> (<?= $value['ups_account_number'] ?>)
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <label class="col-m-4 seting-label" >
+                            <span><b><?= __("Cut off time") ?></b></span>
+                        </label>
+                        <div class="col-m-8">
+                            <select class="select admin__control-select" name="configADD[<?php echo \UPS\Shipping\Helper\Config::SERVICE_UPS_SHIPPING_CUT_OFF_TIME?>]" id="cut_off_time">
+                            <?php
+                                if (array_key_exists($Service['cut_off_time'], $Service['option_cut_off_time'])) {
+                                    $value_check = $Service['cut_off_time'];
+                                } else {
+                                    $value_check = 17;
+                                };
+                                foreach($Service['option_cut_off_time'] as $key => $value) {?>
+                                    <option value="<?= $key ?>" <?php if ($value_check== $key) {echo "selected";}?>>
+                                    <?= $value ?></option>
+                                <?php } ?>
+                            </select>
+                            <?php if ('us' != $selectedCountry) { ?>
+                            <p class="note"><span><?= __("The cut off time selected here will be used in calculating the schedule delivery date and time, which will be displayed on your website checkout.") ?></span></p>
+                            <br />
+                            <?php } ?>
+                            <p class="note"><span><?php if ('us' == $selectedCountry) {
+                                echo __("Order checkouts before this time will display delivery dates based on same day fulfillment. Order checkouts after this time will display delivery dates based on next day fulfillment.");
+                             } else {
+                                echo __("For example, if the cut off time is selected as 5 PM and your e-shoppers views your webstore at 5.01 PM, all UPS scheduled delivery dates and time will be calculated from the following business day. When deciding this cut off time, please ensure that you have sufficient time to fulfill the order before the UPS scheduled pick up or you are able to drop off the packages at a UPS Access Point™.");
+                             } ?></span></p>
+                            <p class="note"><span><?php if ('us' == $selectedCountry) {
+                                echo __("Selecting “Disable” will result in approximate delivery dates being displayed without fulfillment considerations.");
+                             } else {
+                                echo __("If you are unsure about fulfilling customer orders on the same day, you can select 'Disable' which will result in the e-shopper seeing a generic delivery schedule for each available UPS service. For Example; 'UPS® Standard - In most cases, delivered within 1 to 3 business days in Europe.'");
+                             } ?></span></p>
+                        </div>
+                    </div>
+                    <div class="page-main-actions row" style="margin-left:0px">
+                        <div class="page-actions" style="float:left">
+                            <button id="next" name="save" type="submit" class="action-default scalable save primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">
+                                <span class="ui-button-text">
+                                <span><?= __("Save") ?></span>
+                            </button>
+                        </div>
+                        <div class="page-actions">
+                            <button id="next" name="next" type="submit" class="action-default scalable save primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button">
+                                <span class="ui-button-text">
+                                <span><?= __("Next") ?></span>
+                            </button>
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="toapdeliveryvalue" id="toapdeliveryvalue" value="<?= $Service['to_ap_delivery'] ?>">
+    <input type="hidden" name="selected_country" id="selected_country" value="<?=$selectedCountry ?>">
+    <input type="hidden" name="toaddressdeliveryvalue" id="toaddressdeliveryvalue" value="<?= $Service['to_address_delivery'] ?>">
+    <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+</form>
+<?php if ('us' == $selectedCountry) {
+    ?>
+    <div style="padding-top: 1em; line-height: 1.5;">
+        <div class="row">
+            <div class="col-l-12" style="color: #777;">
+                <?php echo '© ' . date("Y") .' United Parcel Service of America, Inc. <br />UPS,  the UPS Shield trademark, the UPS Ready mark, the UPS Developer Kit mark and the Color Brown are trademarks of United Parcel Service of America, Inc. All Rights Reserved.';; ?>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/shippingservice": {}
+        }
+    }
+</script>
+
+
+

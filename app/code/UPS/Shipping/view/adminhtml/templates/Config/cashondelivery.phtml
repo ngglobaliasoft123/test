@@ -1,0 +1,82 @@
+<?php
+    $selectedCountry = $country = strtolower($block->getCountryCode());
+?>
+<div class="page-main-actions">
+    <h2 class="titleCashondelivery" style="margin-bottom:0%"><b><?= __('Collect on Delivery (COD)') ?></b></h2>
+</div>
+<form action="<?php echo $block->getUrl('upsshipping/config/saveCashondelivery')?>" method="POST">
+    <div class="fieldset-wrapper">
+        <div class="admin__fieldset-wrapper-content _hide">
+            <div class="admin__field">
+                <div class="row admin__field-control">
+                    <div class="admin__actions-switch content-cod-css" data-role="switcher">
+                    <!--label class="padding-label-css" -->
+                        <?php if ($block->getConfigData()=="1") { ?>
+                                <span class="hasCOD"><img class="checkedCOD" /></span>
+                                <span class="contentCOD"><?php echo __("You have the official Magento COD module enabled!");?></span>
+                                <br />
+                                <span class="contentCOD  span-margin-left"><?php echo __("The COD Shipping service of this plug-in is automatically compatible with the official Collect on Delivery (COD) module by Magento.");?></span>
+                            <?php
+                            } else { ?>
+                                <span class="hasNoCOD"><img class="nocheckedCOD"/></span>
+                                <span class="contentCOD"><?php echo __("You do not have the official Magento COD module installed and/or enabled!");?></span>
+                                <br />
+                                <span class="contentCOD span-margin-left"><?php echo __("The COD Shipping service of this plug-in is automatically compatible with the official Collect on Delivery (COD) module by Magento.");
+                                ?></span>
+                                <br />
+                                <br />
+                                <span><?php echo __("If you want the UPS Shipping module to automatically detect COD shipments, <strong>please make sure that you have installed Magento's Collect on Delivery (COD)</strong>. If you already have Magento's Collect on Delivery (COD) module installed, <strong>please make sure that the module is enabled</strong>. [<a href='https://docs.magento.com/m2/ce/user_guide/payment/cash-on-delivery.html' target='_blank'>Click here</a>] for detailed guidance.");
+                            }?></span>
+                    <!--/label-->
+                    </div>
+                </div>
+                <br />
+                <?php if ($country != 'us') { ?>
+                <!--COD option-->
+                <label class="padding-label-css">
+                    <span><?= __('Only show Access Points supporting COD shipments?') ?></span>
+                </label>
+                <div class="admin__field-control">
+                    <div class="admin__actions-switch" style="padding-left:15px" data-role="switcher">
+                    <input type="checkbox" class="admin__actions-switch-checkbox" id="ups_cod_option" name
+                    ="configAP[<?php echo \UPS\Shipping\Helper\Config::CASH_ON_DELIVERY_UPS_SHIPPING_OPTION_ACTIVE ?>]"
+                        <?php if ($block->getConfigDataOption()=="1") {echo "checked";} ?>>
+                        <label class="admin__actions-switch-label" for="ups_cod_option">
+                            <span class="admin__actions-switch-text" data-text-on="<?= __("Yes") ?>"
+                            data-text-off="<?= __("No") ?>"></span>
+                        </label>
+                    </div>
+                </div>
+                <div class="admin__field">
+                    <p class="note">
+                        <span>
+                            <?= __("Select 'YES' if you plan to offer COD shipments to a UPS Access Point™") ?>
+                        </span>
+                    </p>
+                </div>
+                <?php } ?>
+                <div class="admin__field page-main-actions" style="margin-left:0px">
+                    <div class="page-actions" data-ui-id="page-actions-toolbar-content-header">
+                        <button id="save" title="<?= __('Next') ?>" type="submit"
+                        class="button-next action-default scalable save primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"  role="button" aria-disabled="false">
+                            <span class="ui-button-text">
+                                <span><?= __('Next') ?></span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+</form>
+<?php if ('us' == $selectedCountry) {
+    ?>
+    <div style="padding-top: 1em; line-height: 1.5;">
+        <div class="row">
+            <div class="col-l-12" style="color: #777;">
+                <?php echo '© ' . date("Y") .' United Parcel Service of America, Inc. <br />UPS,  the UPS Shield trademark, the UPS Ready mark, the UPS Developer Kit mark and the Color Brown are trademarks of United Parcel Service of America, Inc. All Rights Reserved.';; ?>
+            </div>
+        </div>
+    </div>
+<?php } ?>

@@ -1,0 +1,428 @@
+<?php
+    $listAccount = $block->getListAccount();
+    $listPackage = $block->getSelectedPackageShipment();
+    $service = $block->getAllListService();
+    $accessorial = $block->getAllListAccessorial();
+    $country = $block->getListCountry();
+    $accountDefault = $block->getAccountDefault();
+    $selectedCountry = strtolower($block->getCountryCode());
+    $state = $block->getListState();
+    $arrAccessorialServiceTitle = [
+        'UPS_ACSRL_ADDITIONAL_HADING' => 'Applicable for packages exceeding 70 pounds, 48 inches on the longest side or 30 inches on the second longest side. Also applies for any article not fully encased in corrugated cardboard packaging',
+        'UPS_ACSRL_RESIDENTIAL_ADDRESS' => 'Applicable for delivery to a location that is a home, including a business that is operating out of a home',
+        'UPS_ACSRL_TO_HOME_COD' => 'Upon selection by the consumer, UPS will collect the amount shown on C.O.D. tag or package label, then send payment to you.  Applicable only for packages shipped throughout the U.S. and Puerto Rico'
+    ];
+    $arrAccessorialServices = ['UPS_ACSRL_ADDITIONAL_HADING', 'UPS_ACSRL_RESIDENTIAL_ADDRESS', 'UPS_ACSRL_TO_HOME_COD'];
+?>
+<div class="loading-mask" data-role="loader" hidden>
+    <div class="loader"> &nbsp;
+    </div>
+</div>
+<div id="popup_create_single_shipment" class="hidden" style="margin-top:20px;margin-left:4px">
+    <form method="post" id="formCreateShipment"
+    action="<?php echo $block->getUrl('upsshipping/shipment/createshipment') ?>" >
+        <div class="row">
+            <div class="col-xl-3 col-xs-4 admin__field field">
+                <label class="label admin__field-label"><b><?php echo __('Account number') ?></b></label>
+            </div>
+            <div class="col-xl-7 col-xs-6">
+                <div class="admin__field-control control">
+                    <select style="width:100% !important" class="select admin__control-select" id="createAccount"
+                    name="createAccount">
+                        <?php foreach($listAccount as $key => $value) { ?>
+                            <option value="<?php echo $value['account_id'] ?>">
+                            <?php echo $value['address_type'] ?> (#<?php echo $value['ups_account_number'] ?>)</option>
+                        <?php } ?>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="row">
+                    <div class="col-xs-12 admin__field field">
+                        <label class="label admin__field-label"><b><?php echo __('Ship From') ?></b></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-offset-1 col-xs-11">
+                        <div class="row">
+                            <div class="col-xs-12 admin__field">
+                                <b><label id="CreateFullName"></label></b>
+                            </div>
+                            <div class="col-xs-12 admin__field">
+                                <label id="createAddress1"></label>
+                            </div>
+                            <div class="col-xs-12 admin__field">
+                                <label id="createCity"></label>
+                            </div>
+                            <div class="col-xs-12 admin__field">
+                                <label id="createPostCode"></label>
+                            </div>
+                            <div class="col-xs-12 admin__field">
+                                <label id="createCountry"></label>
+                            </div>
+                            <div class="col-xs-12 admin__field">
+                                <label id="createPhone"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="row">
+                    <div class="col-xs-12 admin__field field">
+                        <label class="label admin__field-label"><b><?php echo __('Ship To') ?></b></label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-offset-1 col-xs-11">
+                        <div class="row" id="createShipTo"></div>
+                    </div>
+                    <div class="col-xs-offset-1 col-xs-11">
+                        <div class="row hidden" id="editShipTo">
+                            <div class="row admin__field">
+                                <label class="col-xl-4 col-xs-4 admin__field-label" style="text-align: left;">
+                                <span><?php echo __('Name') ?></span></label>
+                                <div class="col-xl-8 col-xs-8 admin__field-control">
+                                    <input class="admin__control-text" type="text" id="editName" name="edit_name"
+                                    value="" maxlength="100" placeholder="">
+                                </div>
+                            </div>
+                            <div class="row admin__field">
+                                <label class="col-xl-4 col-xs-4 admin__field-label" style="text-align: left;">
+                                <span><?php echo __('Address') ?></span></label>
+                                <div class="col-xl-8 col-xs-8 admin__field-control">
+                                    <input class="admin__control-text" type="text" id="editAddress1"
+                                    name="edit_address1" value="" placeholder="" maxlength="50" required>
+                                </div>
+                            </div>
+                            <div class="row admin__field">
+                                <label class="col-xl-4 col-xs-4 admin__field-label" style="text-align: left;"></label>
+                                <div class="col-xl-8 col-xs-8 admin__field-control">
+                                    <input class="admin__control-text" type="text" id="editAddress2"
+                                    name="edit_address2" value="" placeholder="" maxlength="50">
+                                </div>
+                            </div>
+                            <div class="row admin__field">
+                                <label class="col-xl-4 col-xs-4 admin__field-label" style="text-align: left;"></label>
+                                <div class="col-xl-8 col-xs-8 admin__field-control">
+                                    <input class="admin__control-text" type="text" id="editAddress3"
+                                    name="edit_address3" value="" placeholder="" maxlength="50">
+                                </div>
+                            </div>
+                            <div class="row admin__field">
+                                <label class="col-xl-4 col-xs-4 admin__field-label" style="text-align: left;">
+                                <span class="no-spaces"><?php echo __('Postal code') ?></span></label>
+                                <div class="col-xl-8 col-xs-8 admin__field-control">
+                                    <input class="admin__control-text" type="text" id="editPostcode"
+                                    name="edit_postcode" value="" placeholder="" required>
+                                </div>
+                            </div>
+                            <div class="row admin__field">
+                                <label class="col-xl-4 col-xs-4 admin__field-label" style="text-align: left;">
+                                <span><?php echo __('City') ?></span></label>
+                                <div class="col-xl-8 col-xs-8 admin__field-control">
+                                    <input class="admin__control-text" type="text" id="editCity" name="edit_city"
+                                    value="" maxlength="30"  placeholder="" required>
+                                </div>
+                            </div>
+                            <div class="row admin__field showListState hidden">
+                                <label class="col-xl-4 col-xs-4 admin__field-label" style="text-align: left;">
+                                <span><?php echo __('State') ?></span></label>
+                                <div class="col-xl-8 col-xs-8 admin__field-control listState">
+                                    <select class="select admin__control-select stateSelected"
+                                    style="width:100% !important"></select>
+                                </div>
+                            </div>
+                            <div class="row admin__field">
+                                <label class="col-xl-4 col-xs-4 admin__field-label" style="text-align: left;">
+                                <span class="no-spaces"><?php echo __('Country/Territory') ?></span></label>
+                                <div class="col-xl-8 col-xs-8 admin__field-control">
+                                    <select class="select admin__control-select countrySelected"
+                                    style="width:100% !important">
+                                        <?php foreach($country as $item) { ?>
+                                            <option name="<?= $item['label'] ?>" value="<?= $item['value']?>">
+                                            <?= $item['label'] ?></option>
+                                        <?php } ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row admin__field">
+                                <label class="col-xl-4 col-xs-4 admin__field-label"
+                                style="text-align: left; hyphens: none !important;"><span class="no-spaces">
+                                    <?php echo __('Phone &nbsp number') ?></span></label>
+                                <div class="col-xl-8 col-xs-8 admin__field-control">
+                                    <input class="admin__control-text" type="text" id="editPhone" name="edit_phone"
+                                    value="" maxlength="15" required>
+                                </div>
+                            </div>
+                            <div class="row admin__field">
+                                <label class="col-xl-4 col-xs-4 admin__field-label" style="text-align: left;">
+                                <span><?php echo __('Email') ?></span></label>
+                                <div class="col-xl-8 col-xs-8 admin__field-control">
+                                    <input class="admin__control-text" type="text" id="editEmail" name="edit_email"
+                                    value="" maxlength="100" required>
+                                </div>
+                            </div>
+                            <div class="row admin__field">
+                                <span style="color: red"><i>
+                                    <?= __('Note: Insufficient or incorrect address may increase the shipping fee') ?>
+                                </i></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-top:10px">
+            <div class="row admin__field">
+                <div class="col-xl-2 col-xs-3">
+                    <label class="label admin__field-label"><b><?php echo __('Shipping service:') ?></b></label>
+                </div>
+                <div class="col-xl-10 col-xs-9" id="shippingserviceCreate"></div>
+                <?php if (!empty($service) && is_array($service)) { ?>
+                    <div class="col-xl-10 col-xs-9 hidden" id="editShippingServiceToAp">
+                        <?php
+                        $stt = 0;
+                        foreach($service as $item) {
+                            if ($item['service_type'] == 'AP') {
+                                $stt++;
+                        ?>
+                            <legend class="<?php if ($stt != 1) { echo "admin__control-paddingradio"; } ?>">
+                                <input class="admin__control-radio" type="radio" name="optradio" id="<?= $item['id'] ?>"
+                                 value="<?= $item['service_key'] ?>" data-ratecode="<?= $item['rate_code'] ?>"
+                                  service-name="<?= $item['service_name'] ?>" service-type="<?= $item['service_type'] ?>">
+                                <label class="admin__field-label" for="<?= $item['id'] ?>">
+                                <?= $item['service_name_info'] ?></label>
+                            </legend>
+                        <?php }
+                        } ?>
+                    </div>
+                    <div class="col-xl-10 col-xs-9 hidden" id="editShippingServiceToAdd">
+                        <?php
+                        $stt = 0;
+                        foreach($service as $item) {
+                            if ($item['service_type'] == 'ADD') {
+                                $stt++;
+                        ?>
+                            <legend class="<?php if ($stt != 1) { echo "admin__control-paddingradio"; } ?>">
+                                <input class="admin__control-radio" type="radio" name="optradio" id="<?= $item['id'] ?>"
+                                 value="<?= $item['service_key'] ?>" data-ratecode="<?= $item['rate_code'] ?>"
+                                  service-name="<?= $item['service_name'] ?>" service-type="<?= $item['service_type'] ?>">
+                                <label class="admin__field-label" for="<?= $item['id'] ?>">
+                                <?= $item['service_name_info'] ?></label>
+                            </legend>
+                        <?php }
+                        } ?>
+                    </div>
+                <?php } ?>
+            </div>
+            <div class="row admin__field <?php if ('us' == $selectedCountry) echo 'required' ?>">
+                <div class="col-xl-2 col-xs-3">
+                    <label class="label admin__field-label"><span><b>
+                        <?php
+                            if ('us' == $selectedCountry) {
+                                echo __('Accessorial Service:');
+                            } else {
+                                echo __('Accessorial service:');
+                            }
+                        ?></b></span>
+                        <?php
+                            if ('us' == $selectedCountry) { ?>
+                        <span class="red_star_2">*</span>
+                        <?php
+                            } ?>
+                    </label>
+                </div>
+                <div class="col-xl-10 col-xs-9" id="accessorialservice"></div>
+                <div class="col-xl-10 col-xs-9 hidden" id="editAccessorialService">
+                    <?php if (!empty($accessorial) && is_array($accessorial)) {
+                        $stt = 0;
+                        foreach($accessorial as $item) {
+                            $stt++;
+                    ?>
+                            <div class="admin__field admin__field-option" style="<?php if ($stt == 1) {
+                                echo "padding-top:0px !important"; } ?>">
+                                <input type="checkbox" class="admin__control-checkbox"
+                                id="accessorial-<?= $item['id'] ?>" name="<?= $item['id'] ?>"
+                                value="<?= $item['accessorial_key'] ?>">
+                                <label for="accessorial-<?= $item['id'] ?>" class="admin__field-label">
+                                <?= __($item['accessorial_name']) ?>
+                                <?php
+                                    if ('us' == $selectedCountry && in_array($item['accessorial_key'], $arrAccessorialServices)) {
+                                ?>
+                                    <div class="admin__field-tooltip">
+                                        <a class="admin__field-tooltip-action" style="top:-5px;"></a>
+                                        <div class="admin__field-tooltip-content" style="right: -7rem;">
+                                            <?php echo __($arrAccessorialServiceTitle[$item['accessorial_key']]); ?></div>
+                                    </div>
+                                <?php
+                                    }
+                                ?>
+                            </label>
+                            </div>
+                        <?php
+                        }
+                    }
+                    ?>
+                </div>
+            </div>
+            <?php
+                if ('us' == $selectedCountry) {
+                    ?>
+                    <div class="row us_note_edit"><p class="us_note_select"><span class="red_star">*</span>
+                    <?php
+                    echo __("Select “Edit” and add applicable accessorial services for a more accurate shipping estimate");
+                    ?>
+                    </div>
+                    <?php
+                }
+                ?>
+            <div class="row admin__field addPackage">
+                <div class="col-xs-12">
+                    <label class="label admin__field-label"><b><?php echo __('Packaging') ?></b></label>
+                </div>
+                <?php
+                    foreach($listPackage as $key => $value) {
+                ?>
+                <div class="row admin__field field packageAddRow have-depend-on">
+                    <label class="label admin__field-label col-xs-2 label-auto-increment"
+                    style="padding-right: 10px !important;font-weight: normal !important;padding-bottom:7px">
+                    <?php echo __('Package #')?><o><?=($key+1)?></o></label>
+                    <div class="admin__field-control control col-xs-8">
+                        <select style="width:100% !important" class="select admin__control-select selectCusPackage"
+                        name="Packaging">
+                                <option value="1" selected><?= 'Package_' . ($key+1)?>(<?= $value['length']?>x<?= $value['width']?>x<?= $value['height'] ?><?php if ($value['unit_dimension'] == 'cm') { echo 'cm';} else {echo 'inch';} ?>,<?= $value['weight'] ?><?php if ($value['unit_weight'] == 'kgs') { echo 'Kg';} else {echo 'Pounds';} ?>)</option>
+                            <option value="custom_package"><?php echo __('Custom Package') ?></option>
+                        </select>
+                    </div>
+                    <div class="col-xs-2">
+                        <div id="removePackage" class="removeRow hidden" style="width:20px; cursor: pointer;"></div>
+                    </div>
+                    <div class="row admin__field field hidden depend-on-custom-package">
+                        <div class="col-xs-offset-2 admin__field-control control col-xs-10">
+                            <div style="width:84.2%">
+                                <div class="row service-row">
+                                    <div class="col-xs-2" style="padding-right:3%;">
+                                        <input class="admin__control-text" type="text" value="" name="weight">
+                                    </div>
+                                    <div class="col-xs-2" style="padding-right:1%; margin-left:-2%;">
+                                    <?php if ('us' == $selectedCountry) { ?>
+                                        <select style="width:100% !important;height: 33px;" class="select" name="unit_weight">
+                                            <option value="lbs">Pounds</option>
+                                            <option value="kgs">Kg</option>
+                                        </select>
+                                    <?php } else { ?>
+                                        <select style="width:100% !important;height: 33px;" class="select" name="unit_weight">
+                                            <option value="kgs">Kg</option>
+                                            <option value="lbs">Pounds</option>
+                                        </select>
+                                    <?php } ?>
+                                    </div>
+                                    <div class="col-xs-2" style="padding-right:3%;margin-left:2%;">
+                                        <input class="admin__control-text" type="text" value="" name="length"
+                                        maxlength="100">
+                                    </div>
+                                    <div class="col-xs-2" style="padding-right:3%;margin-left:-2%;">
+                                        <input class="admin__control-text" type="text" value="" name="width"
+                                        maxlength="100">
+                                    </div>
+                                    <div class="col-xs-2" style="padding-right:2%;margin-left:-2%;">
+                                        <input class="admin__control-text" type="text" value="" name="height"
+                                        maxlength="100">
+                                    </div>
+                                    <div class="col-xs-2" style="margin-left: -1%">
+                                    <?php if ('us' == $selectedCountry) { ?>
+                                        <select style="width:100% !important;height: 33px;" class="select" name="unit_dimension">
+                                            <option value="inch">Inch</option>
+                                            <option value="cm">Cm</option>
+                                        </select>
+                                    <?php } else { ?>
+                                        <select style="width:100% !important;height: 33px;" class="select" name="unit_dimension">
+                                            <option value="cm">Cm</option>
+                                            <option value="inch">Inch</option>
+                                        </select>
+                                    <?php } ?>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-2 field" style="padding-right:7%;text-align:center">
+                                    <label class="label admin__field-label"><span style="opacity:0.8;font-size:13px;">
+                                        <?php echo __('Weight') ?><o style="color:red">*</o></span></label>
+                                    </div>
+                                    <div class="col-xs-offset-2 col-xs-2 field"
+                                    style="padding-right:7%;text-align:center">
+                                        <label class="label admin__field-label">
+                                            <span style="opacity:0.8;font-size:13px;display:inline-block;width:78px;text-align:center!important;"><?php echo __('Length') ?>
+                                            <o style="color:red">*</o></span></label>
+                                    </div>
+                                    <div class="col-xs-2 field"
+                                    style="padding-right:9%;margin-left:-1%;text-align:center">
+                                        <label class="label admin__field-label"><span
+                                        style="opacity:0.8;font-size:13px;display:inline-block;width:78px;text-align:center!important;"><?php echo __('Width') ?>
+                                        <o style="color:red">*</o></span></label>
+                                    </div>
+                                    <div class="col-xs-2 field"
+                                    style="padding-right:7%;margin-left:-2%;text-align:center">
+                                        <label class="label admin__field-label">
+                                            <span style="opacity:0.8;font-size:13px;display:inline-block;width:82px;text-align:center!important;"><?php echo __('Height') ?>
+                                            <o style="color:red">*</o></span></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <?php
+                    }
+                ?>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <a href="javascript:;"><o id="addPackage" class="buttonAddPackage" style="padding-left:20px">
+                        <?php echo __('Add package') ?></o></a>
+                </div>
+            </div>
+            <div class="row" style="margin-top:7px">
+                <div class="col-xl-6 col-xs-8">
+                    <a href="javascript:;" id="apiRating">
+                        <?php echo __('View estimated shipping fee and delivery date') ?></a>
+                </div>
+                <div class="col-xl-6 col-xs-4" id="rating"></div>
+            </div>
+            <div id="messageFalse"></div>
+        </div>
+        <input type="hidden" name="okMessage" id="okMessage" value="<?= __('OK') ?>">
+        <input type="hidden" name="urlcreateshipment" id="urlcreateshipment" value="<?php echo $block->getURL('upsshipping/shipment/createshipment')?>">
+        <input type="hidden" name="urlorderdetail" id="urlorderdetail" value="<?php echo $block->getURL('upsshipping/shipment/orderDetail')?>">
+        <input type="hidden" name="liststates" id="liststates" value="<?= base64_encode(json_encode($state)) ?>">
+        <input type="hidden" name="packagemessage" id="packagemessage" value="<?php echo __('Package:') . ' ' . __('Some of the data you entered is not valid. Please check again.') ?>">
+        <input type="hidden" name="urlrateshipment" id="urlrateshipment" value="<?php echo $block->getURL('upsshipping/shipment/rateshipment')?>">
+        <input type="hidden" name="urlordershipment" id="urlordershipment" value="<?php echo $block->getURL('upsshipping/shipment/order')?>">
+        <input type="hidden" name="createshipmentmessage" id="createshipmentmessage" value="<?= __('Create Shipment') ?>">
+        <input type="hidden" name="editshipmentmessage" id="editshipmentmessage" value="<?= __('Edit') ?>">
+        <input type="hidden" name="canceleditshipmentmessage" id="canceleditshipmentmessage" value="<?= __('Cancel Editing') ?>">
+        <input type="hidden" name="processshipmentmessage" id="processshipmentmessage" value="<?= __('Process Shipment') ?>">
+        <input type="hidden" name="shiptoservicenameadd" id="shiptoservicenameadd" value="<?= __(\UPS\Shipping\Helper\Config::SHIP_TO_SERVICE_ADD) ?>">
+        <input type="hidden" name="shiptoservicenameap" id="shiptoservicenameap" value="<?= __(\UPS\Shipping\Helper\Config::SHIP_TO_SERVICE_AP) ?>">
+        <input type="hidden" name="accountdefaultadd" id="accountdefaultadd" value="<?= $accountDefault['ADD'] ?>">
+        <input type="hidden" name="accountdefaultap" id="accountdefaultap" value="<?= $accountDefault['AP'] ?>">
+        <input type="hidden" name="emailempty" id="emailempty" value="<?php echo __("The email is not empty") ?>">
+        <input type="hidden" name="phoneempty" id="phoneempty" value="<?php echo __("The phone is not empty") ?>">
+        <input type="hidden" name="cityempty" id="cityempty" value="<?php echo __("The city is not empty") ?>">
+        <input type="hidden" name="postalempty" id="postalempty" value="<?php echo __("The postal code is empty or invalid") ?>">
+        <input type="hidden" name="addressempty" id="addressempty" value="<?php echo __("The address is required") ?>">
+        <input type="hidden" name="nameempty" id="nameempty" value="<?php echo __("The name is not empty") ?>">
+        <input type="hidden" name="apierrormessage" id="apierrormessage" value="<?= __("There are errors connecting to the UPS API servers. Please try again.")?>">
+        <input type="hidden" name="urlorder" id="urlorder" value="<?php echo $block->getUrl('upsshipping/shipment/order')?>">
+        <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+    </form>
+</div>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/popupcreatesingleshipment": {}
+        }
+    }
+</script>

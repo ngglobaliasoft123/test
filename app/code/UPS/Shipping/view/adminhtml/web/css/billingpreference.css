@@ -1,0 +1,23 @@
+.titleBilling {
+    background: url(../images/credit-card.png) no-repeat center left;
+    text-indent: 25px;
+}
+.content-bold {
+    font-size: 15px;
+}
+.pad-paragraph {
+    padding-bottom: 4px;
+    padding-left: 20px;
+}
+.page-title {
+    background: url(../images/ups_logo.svg) no-repeat center left;
+    line-height: 50px;
+    text-indent: 60px;
+    background-size: 2em;
+}
+.popup-inner {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 0px;
+}

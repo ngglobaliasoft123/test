@@ -1,0 +1,143 @@
+<?php
+    $listOpenOrder = $block->getListOpenOrders();
+    $pageOpenOrders = $block->getPageOpenOrders();
+    $currencySymbol = $block->getCurrencySymbol();
+    $selectedCountry = strtolower($block->getCountryCode());
+?>
+<div class="body_panel">
+    <div class="list-button">
+        <button id="create_single_shipment" type="button" disabled>
+            <span><?php echo __('Create Single Shipments') ?></span>
+        </button>
+        <button id="create_batch_shipment" type="button" disabled>
+            <span><?php echo __('Create Batch Shipments') ?></span>
+        </button>
+        <button type="button" id="export-all-orders" <?php if (count($listOpenOrder) == 0) {echo 'disabled';} ?>>
+            <span><?php echo __('Export All Orders') ?></span>
+        </button>
+        <button type="button" id="orders_data_ddmmyy" disabled>
+            <span><?php echo __('Export Orders') ?></span>
+        </button>
+        <button type="button" id="updateArchiveOrder" value="save" disabled>
+            <span><?php echo __('Archive Orders') ?></span>
+        </button>
+    </div>
+    <form action="<?php echo $block->getUrl('upsshipping/shipment/export') ?>" method="post"
+    id="form-orders_data_ddmmyy" class="hidden">
+        <input type="submit" value='export-all-orders' name='ExportType'/>
+        <input type="hidden" value='' name='orderIds'/>
+        <input type="hidden" value='<?= $block->exportSortColumn() ?>' name='OrderBy' />
+        <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+    </form>
+    <form action="<?php echo $block->getUrl('upsshipping/shipment/archiveOrder')?>" method="post"
+    id="updateValue" class="hidden">
+        <input type="submit" value='updateArchiveOrder' name='updateStatus'/>
+        <input type="hidden" value='' name='orderIds'/>
+        <input type="hidden" value='<?= $block->exportSortColumn() ?>' name='OrderBy' />
+        <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+    </form>
+    <table class="data-grid data-grid-draggable list-data-table">
+        <thead>
+            <tr>
+                <th>
+                    <input class="admin__control-checkbox" type="checkbox" id="selectAll" disabled>
+                    <label for="selectAll" class="labelCheckAll"></label>
+                </th>
+                <?php
+                $columnHeader = $block->getColumnHeader();
+                foreach($columnHeader as $key=>$column) {
+                    if (isset($column['width'])) {
+                        echo '<th style="min-width: '. $column['width'] .'">'.$column['text'];
+                    } else {
+                        echo '<th>'.$column['text'];
+                    }
+                    if ($column['sort'] != 'NONE') {
+                        $link = $block->getUrl('upsshipping/shipment/order/page_id/'.$block->getCurrentPage().'/'
+                        .$key.'/'.$column['sort']);
+                        echo '<a href="'.$link.'" class="sort '.(($column['sort'] == 'ASC') ? 'up' : 'down').'"></a>';
+                    }
+                    echo '</th>';
+                }
+                ?>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+                foreach($listOpenOrder as $listID) {
+            ?>
+                <tr>
+                    <td>
+                        <input class="admin__control-checkbox selectAll" id="order<?= $listID['id']?>" type="checkbox"
+                        value="<?= $listID['id']?>" service="<?= $listID['service_type']?>" disabled>
+                        <label for="order<?= $listID['id']?>"></label>
+                    </td>
+                    <td class="open-order-grid-view"><?= $listID['increment_id']?></td>
+                    <td class="open-order-grid-view"><?= date("M d, Y", strtotime($listID['created_at']))?></td>
+                    <td class="open-order-grid-view"><?= date("H:i:s", strtotime($listID['created_at']))?></td>
+                    <td class="open-order-grid-view align-left"><?= $listID['listProductName']; ?></td>
+                    <td class="open-order-grid-view align-left"><?php echo $listID['AddressFormat']; ?></td>
+                    <td class="open-order-grid-view align-left"><?php ($listID['service_type'] == 'ADD')
+                    ? $sv = 'Address': $sv = 'AP'; echo 'To ' . $sv. ' (' . $listID['service_name_info'] . ')'?></td>
+                    <td class="open-order-grid-view"><?php if ($listID['cod'] == 1) {echo '<img class="checkedCOD" />';
+                    } else {echo '<img class="cancelCOD" />';}?></td>
+                </tr>
+            <?php
+                }
+                if (count($listOpenOrder) == 0) {
+                    echo '<tr class="no_order_rows"><td colspan="8" align="center"><p>'
+                    .__("We couldn't find any records").'</p></td></tr>';
+                }
+            ?>
+        </tbody>
+    </table>
+    <br>
+    <div class="row">
+        <div class="col-l-12">
+            <center>
+                <ul class="pagination">
+                    <?php
+                        $sortColumn = $block->getSortColumn();
+                        $listPages = $block->orderPagination();
+                        foreach($listPages as $row) {
+                            $active = ($row['page'] == $block->getCurrentPage()) ? "active" : "";
+                            if ($row['page'] == '') {
+                                $link = 'javascript:;';
+                            } else {
+                                $link = 'upsshipping/shipment/order/page_id/'.$row['page'];
+                                if (!empty($sortColumn)) {
+                                    $link .= '/'.$sortColumn[0].'/'.$sortColumn[1];
+                                }
+                                $link = $block->getUrl($link);
+                            }
+                            echo '<li class="'.$active.'"><a href="'.$link.'">'.$row['text'].'</a></li>';
+                        }
+                    ?>
+                </ul>
+            </center>
+        </div>
+    </div>
+</div>
+<?php if ('us' == $selectedCountry) {
+    ?>
+    <div style="padding-top: 1em; line-height: 1.5;">
+        <div class="row">
+            <div class="col-l-12" style="color: #777;">
+                <?php echo '© ' . date("Y") .' United Parcel Service of America, Inc. <br />UPS,  the UPS Shield trademark, the UPS Ready mark, the UPS Developer Kit mark and the Color Brown are trademarks of United Parcel Service of America, Inc. All Rights Reserved.';; ?>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+<input type="hidden" name="okmessage" id="okmessage" value="<?= __('OK') ?>">
+<input type="hidden" name="cancelmessage" id="cancelmessage" value="<?= __('Cancel') ?>">
+<input type="hidden" name="warningmessage" id="warningmessage" value="<?= __("Warning - Archiving orders will move your orders in the Archive tab and you can no longer process these orders. Click 'OK' to continue, 'Cancel' to go back to the screen") ?>">
+<input type="hidden" name="archivingorder" id="archivingorder" value="<?= __('Archiving Orders') ?>">
+<input type="hidden" name="countopenorder" id="countopenorder" value="<?= count($listOpenOrder) ?>">
+<input type="hidden" name="commonvalidatemessage" id="commonvalidatemessage" value="<?php echo __('Some of the data you entered is not valid. Please check again.')?>">
+<input type="hidden" name="urlorderDetail" id="urlorderDetail" value="<?php echo $block->getURL('upsshipping/shipment/orderDetail') ?>">
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/order": {}
+        }
+    }
+</script>

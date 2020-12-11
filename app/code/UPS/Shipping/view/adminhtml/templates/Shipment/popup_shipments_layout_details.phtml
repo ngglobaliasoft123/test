@@ -1,0 +1,70 @@
+<div id="popup_shipments_layout_details" class="hidden">
+    <div id="shipments-layout-title">
+        <h2 style="margin-bottom: 5px"><p class="shipment-id"></p></h2>
+        <p class="shipment-datetime"></p>
+        <p class="shipment-package-status"></p>
+    </div>
+    <div id="shipments-layout-info">
+        <div class="row">
+            <label class="col-xs-offset-2 col-xs-4 setting-label" for=""><?php echo __('Order #ID reference:')?></label>
+            <div class="col-xs-6 label-value"><span id="detail_order_id"></span></div>
+        </div>
+        <div class="row">
+            <label class="col-xs-offset-2 col-xs-4 setting-label" for=""><?php echo __('Tracking number:')?></label>
+            <div class="col-xs-6 label-value"><span id="detail_tracking_number"></span></div>
+        </div>
+        <div class="row">
+            <label class="col-xs-offset-2 col-xs-4 setting-label" for=""><?php echo __('Customer:')?></label>
+            <div class="col-xs-6 label-value"><span id="detail_customer_name"></span></div>
+        </div>
+        <div class="row">
+            <label class="col-xs-offset-2 col-xs-4 setting-label" for=""><?php echo __('Product:')?></label>
+            <div class="col-xs-6 label-value"><span id="detail_shipment_product"></span></div>
+        </div>
+        <div class="row">
+            <label class="col-xs-offset-2 col-xs-4 setting-label" for=""><?php echo __('Address:')?></label>
+            <div class="col-xs-6 label-value"><span id="detail_address"></span></div>
+        </div>
+        <div class="row">
+            <label class="col-xs-offset-2 col-xs-4 setting-label" for=""><?php echo __('Phone number:')?></label>
+            <div class="col-xs-6 label-value"><span id="detail_phone_number"></span></div>
+        </div>
+        <div class="row">
+            <label class="col-xs-offset-2 col-xs-4 setting-label" for=""><?php echo __('Email:')?></label>
+            <div class="col-xs-6 label-value"><span id="detail_customer_email"></span></div>
+        </div>
+        <div class="row">
+            <label class="col-xs-offset-2 col-xs-4 setting-label" for=""><?php echo __('Shipping service:')?></label>
+            <div class="col-xs-6 label-value"><span id="detail_shipping_service"></span></div>
+        </div>
+        <div class="row">
+            <label class="col-xs-offset-2 col-xs-4 setting-label" for=""><?php echo __('Access Point:')?></label>
+            <div class="col-xs-6 label-value"><span id="detail_access_point"></span></div>
+        </div>
+        <div class="row">
+            <label class="col-xs-offset-2 col-xs-4 setting-label" for=""><?php echo __('Package details:')?></label>
+            <div class="col-xs-6 label-value"><span id="detail_package_info"></span></div>
+        </div>
+        <div class="row">
+            <label class="col-xs-offset-2 col-xs-4 setting-label" for=""><?php echo __('Accessorial Service:')?></label>
+            <div class="col-xs-6 label-value"><span id="detail_accessorial_service"></span></div>
+        </div>
+        <div class="row">
+            <label class="col-xs-offset-2 col-xs-4 setting-label" for=""><?php echo __('Order value:')?></label>
+            <div class="col-xs-6 label-value"><span id="detail_order_value"></span></div>
+        </div>
+        <div class="row">
+            <label class="col-xs-offset-2 col-xs-4 setting-label" for=""><?php echo __('Estimated Shipping Fee:')?>
+        </label>
+            <div class="col-xs-6 label-value"><span id="detail_shipping_fee"></span></div>
+        </div>
+    </div>
+</div>
+<input type="hidden" name="okMessage" id="okMessage" value="<?= __('OK') ?>">
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/popupshipmentslayoutdetails": {}
+        }
+    }
+</script>

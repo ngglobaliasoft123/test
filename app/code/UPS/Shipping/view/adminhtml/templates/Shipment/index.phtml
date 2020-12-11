@@ -1,0 +1,157 @@
+<?php
+    $listShipments = $block->getListShipments();
+    $currencySymbol = $block->getCurrencySymbol();
+    $currencyCode = $block->getCurrencyCode();
+    $shipmentPages = $block->getNumberPages();
+    $selectedCountry = strtolower($block->getCountryCode());
+?>
+<div class="body_panel">
+    <div class="list-button">
+        <form action="<?php echo $block->getUrl('upsshipping/shipment/exportshipment') ?>" method="post" id="shipment">
+            <button type="button" name="label" id="printLabelPDF" disabled>
+                <span><?php echo __('Download PDF Label') ?></span>
+            </button>
+            <button type="button" name="label" id="printLabelZPL" disabled>
+                <span><?php echo __('Download ZPL Label') ?></span>
+            </button>
+            <button type="button" id="exportData" disabled>
+                <span><?php echo __('Export Shipment Data') ?></span>
+            </button>
+            <button type="button" id="cancelShipment" disabled>
+                <span><?php echo __('Cancel Shipments') ?></span>
+            </button>
+            <input type="hidden" name="listChecked">
+            <input type="hidden" name="statusExport">
+            <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+        </form>
+        <form action="<?php echo $block->getUrl('upsshipping/shipment/exportlabel') ?>" method="post"
+        id="formPrintLabel">
+            <input type="hidden" name="listCheckedLabel">
+            <input type="hidden" name="labelFormat">
+            <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+        </form>
+    </div>
+    <div class="page-main-actions term-condition" style="background:#c3daf9">
+        <p class="popupShipment" style="margin-bottom:0%">
+        <?=__("By selecting any order in this shipment tab, I agree to the <a href='javascrip:void(0);' id='term-condition'>Terms and Conditions.</a>") ?></p>
+    </div>
+    <div class="row" id="shipments-layout">
+        <table class="data-grid data-grid-draggable list-data-table">
+            <thead>
+                <tr>
+                    <th>
+                        <input class="admin__control-checkbox" type="checkbox" id="selectAll" disabled>
+                        <label for="selectAll"></label>
+                    </th>
+                    <?php
+                        $tableHeader = $block->getShipmentTableHeader();
+                        foreach($tableHeader as $key => $value) {
+                            if (isset($value['min_width'])) {
+                                echo '<th style="min-width: '. $value['min_width'] .'">'.$value['text'];
+                            } else {
+                                echo '<th>'.$value['text'];
+                            }
+                            if ($value['sort'] != 'NONE') {
+                                $link = $block->getUrl('upsshipping/shipment/index/page_id/'
+                                .$block->getCurrentPage().'/'.$key.'/'.$value['sort']);
+                                echo '<a href="'.$link.'" class="sort '.(($value['sort'] == 'ASC') ? 'up' : 'down')
+                                .'"></a>';
+                            }
+                            echo '</th>';
+                        }
+                    ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                if (is_array($listShipments) && isset($listShipments)) {
+                    foreach($listShipments as $item) {
+                ?>
+                    <tr>
+                        <td>
+                            <input class="admin__control-checkbox selectAll" id="shipment<?= $item['tracking_number']?>" name="checkbox-shipment-gridview" type="checkbox" value="<?php echo $item['idOrder']; ?>"
+                            data-id="<?php echo $item['tracking_number'] ?>" ShipmentID="<?php echo $item['id']?>"
+                            trackingNumber="<?php echo $item['tracking_number']?>"
+                            shipmentNumber="<?php echo $item['shipment_number']?>"
+                            trackId="<?php echo $item['trackingId']?>" disabled>
+                            <label for="shipment<?= $item['tracking_number']?>"></label>
+                        </td>
+                        <td class="shipment-grid-view"><input type="hidden" name="shipmentId"
+                        value="<?php echo $item['id']?>" data-id="<?php echo $item['shipment_number']?>">
+                        <?php echo $item['shipment_number']; ?></td>
+                        <td class="shipment-grid-view"><input type="hidden" name="trackingNumber"
+                        value="<?php echo $item['tracking_number']; ?>" data-id="<?php echo $item['trackingId']?>">
+                        <?php echo $item['tracking_number']; ?></td>
+                        <td class="shipment-grid-view"><?php echo $item['increment_id']; ?></td>
+                        <td class="shipment-grid-view"><?php $date = date("M d, Y", strtotime($item['date_created']));
+                        echo $date; ?></td>
+                        <td class="shipment-grid-view"><?php $time = date("H:i:s", strtotime($item['date_created']));
+                        echo $time; ?></td>
+                        <td class="shipment-grid-view align-left"><?= $block->getDeliveryAddress($item);?></td>
+                        <td class="shipment-grid-view"><?=$currencyCode ?><?php echo number_format($item['shipping_fee'], 2); ?></td>
+                    </tr>
+                    <?php
+                    }
+                }
+                if (count($listShipments) == 0) {
+                    echo '<tr class="no_shipment_rows"><td colspan="9" align="center"><p>'
+                    .__("We couldn't find any records").'</p></td></tr>';
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-xs-12">
+            <center>
+                <ul class="pagination">
+                    <?php
+                        $sortColumn = $block->getSortColumn();
+                        $listPages = $block->shipmentPagination();
+                        foreach($listPages as $row) {
+                            $active = ($row['page'] == $block->getCurrentPage()) ? "active" : "";
+                            if ($row['page'] == '') {
+                                $link = 'javascript:;';
+                            } else {
+                                $link = 'upsshipping/shipment/index/page_id/'.$row['page'];
+                                if (!empty($sortColumn)) {
+                                    $link .= '/'.$sortColumn[0].'/'.$sortColumn[1];
+                                }
+                                $link = $block->getUrl($link);
+                            }
+                            echo '<li class="'.$active.'"><a href="'.$link.'">'.$row['text'].'</a></li>';
+                        }
+                    ?>
+                </ul>
+            </center>
+        </div>
+    </div>
+</div>
+<?php if ('us' == $selectedCountry) {
+    ?>
+    <div style="padding-top: 1em; line-height: 1.5;">
+        <div class="row">
+            <div class="col-l-12" style="color: #777;">
+                <?php echo '© ' . date("Y") .' United Parcel Service of America, Inc. <br />UPS,  the UPS Shield trademark, the UPS Ready mark, the UPS Developer Kit mark and the Color Brown are trademarks of United Parcel Service of America, Inc. All Rights Reserved.';; ?>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+<input type="hidden" name="cancelshipmentmessage" id="cancelshipmentmessage" value="<?=__('Cancel Shipments') ?>">
+<input type="hidden" name="urlindex" id="urlindex" value="<?php echo $block->getUrl('upsshipping/shipment/index') ?>">
+<input type="hidden" name="urlshipmentdetail" id="urlshipmentdetail" value="<?php echo $block->getUrl('upsshipping/shipment/shipmentdetail') ?>">
+<input type="hidden" name="okmessage" id="okmessage" value="<?= __('OK') ?>">
+<input type="hidden" name="cancelmessage" id="cancelmessage" value="<?= __('Cancel') ?>">
+<input type="hidden" name="confirmmessage" id="confirmmessage" value="<?=__('Are you sure you want to cancel selected shipment(s)?') ?>">
+<input type="hidden" name="apipolandcode" id="apipolandcode" value="<?=$currencyCode?>">
+<input type="hidden" name="shiptoserviceadd" id="shiptoserviceadd" value="<?= __(\UPS\Shipping\Helper\Config::SHIP_TO_SERVICE_ADD) ?>">
+<input type="hidden" name="shiptoserviceap" id="shiptoserviceap" value="<?= __(\UPS\Shipping\Helper\Config::SHIP_TO_SERVICE_AP) ?>">
+<input type="hidden" name="shipmenttitle" id="shipmenttitle" value="<?php echo __("Shipment #")?>">
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/index": {}
+        }
+    }
+</script>

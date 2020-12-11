@@ -1,0 +1,174 @@
+.fa, .far, .fas {
+    background-image: url('../images/location.png');
+    background-color: #cccccc;
+    height: 40px;
+    width: 28px;
+    background-size: cover;
+    display: block;
+    margin-left: 42%;
+}
+.fa-map-marker-alt {
+    font-size: 30px;
+}
+.d-none {
+    display: none !important;
+}
+.addressShow {
+    border: 1px solid #ddd;
+    overflow: hidden;
+    padding: 10px;
+}
+.pAddress {
+    width: 100%;
+    float: left
+}
+.pAddressDiv {
+    width: 30%;
+    text-align: center;
+    float: right;
+}
+.logoCss {
+    float: left;
+    height: 5em;
+    margin-left: -30px;
+    margin-top: -27px;
+}
+.logoUPSCss {
+    float: left;
+    height: 5em;
+    margin-left: -5px;
+    margin-top: -27px;
+}
+.logoAddress {
+    float: left;
+    height: 5em;
+    margin-left: -30px;
+    margin-top: -17px;
+}
+.full-width {
+    width: 100%;
+}
+.full-95-width {
+    width: 95%;
+}
+.full-45-width {
+    width: 45%;
+}
+.full-50-width {
+    width: 50%;
+}
+.one-row {
+    display: inline-block;
+}
+.col-right {
+    text-align: right;
+}
+.margin-date {
+    margin-left: 22px;
+    font-size: 1.3rem;
+}
+#accessPointBlock {
+    margin-top: -20px;
+}
+.btnclass {
+    margin-top: 15px!important;
+    font-weight: 500;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    color: #343a40;
+    background-color: lightgrey;
+    background-image: none;
+    border-color: #343a40;
+    -ms-user-select: none;
+    user-select: none;
+    padding: .375rem .35rem;
+    font-size: 1.5rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+.addressBlock {
+    padding-top: 10px;
+}
+
+.addressTable {
+    width:70%;
+    display: inline-block;
+}
+
+table.addressTable {
+    margin-left: 30%;
+}
+
+@media (min-width: 1024px){
+    .table-checkout-shipping-method {
+        min-width: 800px!important;
+    }
+}
+
+#listServiceUPSAP,
+#listServiceUPSADD {
+    padding-left: 3%;
+}
+
+.floatNear {
+    float: left;
+}
+
+.useAddress {
+    float: right;
+}
+
+.overHidden {
+    overflow: hidden;
+}
+
+.searchAddress {
+    float: left; width: 70%;
+}
+
+.searchMap {
+    width: 90%;
+    padding: 7px 7px!important;
+}
+
+.divSearch {
+    float: right; width: 30%; text-align: right;
+}
+
+.countryAddress {
+    float: left; width: 100%; padding-top: 18px;
+}
+
+.bingMap {
+    padding: 10px; border: 1px solid #ddd;
+}
+
+#upsMap {
+    height: 500px!important;
+}
+
+table.addressTable tbody td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-top: 15px;
+}
+
+@media only screen and (max-width: 1024px) {
+    /* For mobile phones: */
+    table.addressTable {
+    margin-left: 0%;
+    margin-top: 15px;
+    }
+}
+
+@media only screen and (max-width: 512px) {
+    /* For mobile phones: */
+    table.addressTable {
+    margin-top: 10px;
+    }
+}

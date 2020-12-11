@@ -1,0 +1,534 @@
+<?php
+    $language = 'en';
+    $allowChange = \UPS\Shipping\Helper\Config::LISTEULANGUAGES;
+    $localCode = trim($block->getAdminLanguageCode());
+    $countryBase = $block->getCountryCode();
+    $selectedCountry = $country = strtolower($countryBase);
+    if (!empty($localCode)) {
+        $arrayLanguages = explode("_", $localCode);
+        $languageCheck = trim($arrayLanguages[0]) . '_' . trim($countryBase);
+        if (in_array($languageCheck, $allowChange)) {
+            $language = $arrayLanguages[0];
+        }
+    }
+    $dataError = $block->dataFormSession();
+    if ($country == 'us') {
+        $dataError['Currency'] = 'USD';
+    }
+    $accountDefault = $block->getAccountDefault();
+    $listStates = $block->getListStates();
+    $stateName = '';
+    foreach($listStates as $state) {
+        if ($state['code'] == $accountDefault['state_province_code']) {
+            $stateName = $state['name'];
+        }
+    }
+    $successMessage = $block->dataSuccessSession();
+    $errorMessage = $block->dataErrorSession();
+?>
+<div class="entry-edit form-inline">
+    <div class="card-header" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">
+        <div class="page-main-actions">
+            <h2 class="titleAccount" style="margin-bottom:0%"><?php echo __('ACCOUNT') ?></h2>
+        </div>
+    </div>
+    <form action="<?php echo $block->getUrl('upsshipping/config/saveAccountSuccess') ?>" method="post"
+    id="form-accountsuccess">
+        <div class="col-m-12">
+            <fieldset class="fieldset admin__fieldset ">
+                <legend>
+                    <b><span><?php if ('us' == $selectedCountry) {
+                            echo __("For more information on UPS Plugins please click <a target='_blank' href='https://www.ups.com/plugins'>this link</a> (opens in a new browser window)");
+                        } else {
+                            echo __("For more information on UPS Plugins please click <a target='_blank' href='https://www.ups.com/%1/%2/services/technology-integration/ecommerce-plugins.page'>this link</a> (opens in a new browser window)",[$country, $language]);
+                        } ?></span></b>
+                </legend>
+                <br/>
+            </fieldset>
+        </div>
+        <div class="col-m-12">
+            <fieldset class="fieldset admin__fieldset ">
+                <legend>
+                    <b><span><?php echo __('Your UPS Profile') ?></span></b>
+                </legend>
+                <br/>
+            </fieldset>
+        </div>
+        <div class="row">
+            <div class="col-m-6">
+                <fieldset class="admin__fieldset">
+                    <div class="admin__field field">
+                        <label class="remove_pointer label admin__field-label"><span><?= __('Full name:') ?></span></label>
+                        <div class="admin__field-control control">
+                            <div id="customer" class="control-value admin__field-value">
+                                <?php echo $block->escapeHtml($accountDefault['fullname']) ?></div>
+                        </div>
+                    </div>
+                    <div class="admin__field field">
+                        <label class="remove_pointer label admin__field-label"><span><?= __('Company:')?></span></label>
+                        <div class="admin__field-control control">
+                            <div id="customer" class="control-value admin__field-value">
+                                <?php echo $block->escapeHtml($accountDefault['company']) ?></div>
+                        </div>
+                    </div>
+                    <div class="admin__field field">
+                        <label class="remove_pointer label admin__field-label"><span><?= __('Email:') ?></span></label>
+                        <div class="admin__field-control control">
+                            <div id="customer" class="control-value admin__field-value">
+                                <?php echo $block->escapeHtml($accountDefault['email']) ?></div>
+                        </div>
+                    </div>
+                    <div class="admin__field field">
+                        <label class="remove_pointer label admin__field-label"><span class="no-spaces"><?= __('Phone &nbsp number:') ?></span></label>
+                        <div class="admin__field-control control">
+                            <div id="customer" class="control-value admin__field-value">
+                                <?php echo $block->escapeHtml($accountDefault['phone_number']) ?></div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="col-m-6">
+                <fieldset class="admin__fieldset ">
+                    <div class="admin__field field">
+                        <label class="remove_pointer label admin__field-label"><span class="no-spaces"><?= __('Pickup Address:') ?></span></label>
+                        <div class="admin__field-control control">
+                            <div id="customer" class="control-value admin__field-value">
+                                <?php echo $block->escapeHtml($accountDefault['address_1']) .' <br />'
+                                . $block->escapeHtml($accountDefault['address_2']) . ' <br />'
+                                . $block->escapeHtml($accountDefault['address_3']) ?></div>
+                        </div>
+                    </div>
+                    <?php if ('us' == $country) {?>
+                        <div class="admin__field field">
+                            <label class="remove_pointer label admin__field-label"><span class="no-spaces"><?= __('State/Province:') ?></span></label>
+                            <div class="admin__field-control control">
+                                <div id="customer" class="control-value admin__field-value">
+                                    <?php echo $block->escapeHtml($stateName) ?></div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                    <div class="admin__field field">
+                        <label class="remove_pointer label admin__field-label"><span class="no-spaces"><?= __('Pickup Postal Code:') ?></span></label>
+                        <div class="admin__field-control control">
+                            <div id="customer" class="control-value admin__field-value">
+                                <?php echo $block->escapeHtml($accountDefault['post_code']) ?></div>
+                        </div>
+                    </div>
+                    <div class="admin__field field">
+                        <label class="remove_pointer label admin__field-label"><span class="no-spaces"><?= __('City:') ?></span></label>
+                        <div class="admin__field-control control">
+                            <div id="customer" class="control-value admin__field-value">
+                                <?php echo $block->escapeHtml($accountDefault['city']) ?></div>
+                        </div>
+                    </div>
+                    <div class="admin__field field">
+                        <label class="remove_pointer label admin__field-label"><span class="no-spaces"><?= __('Country/Territory:') ?></span></label>
+                        <div class="admin__field-control control">
+                            <div id="customer" class="control-value admin__field-value">
+                                <?php echo $block->escapeHtml($accountDefault['countryName']) ?></div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+        </div>
+        <div>
+            <fieldset class="fieldset admin__fieldset ">
+                <legend>
+                    <b><span><?php echo __('Your Payment Account') ?></span></b>
+                </legend>
+                <br/>
+            </fieldset>
+            <?php
+                $listAccount = $block->getListAccount();
+                $countList = count($listAccount) - 1;
+                $count = 0;
+                foreach($listAccount as $id=>$value) {
+                    if ($id % 4 == 0) {
+                        ?>
+                        <div class="row">
+                        <?php
+                    }
+                ?>
+                <div class="col-m-3">
+                    <fieldset class="admin__fieldset">
+                        <legend>
+                            <b><span><?php if ($value['address_type'] != "") {
+                                echo $block->escapeHtml($value['address_type']);} else { echo "<br/>";} ?></span></b>
+                        </legend>
+                        <br/>
+                        <div class="admin__field-control row">
+                            <label class="admin__field-value"><i><?php echo __('Account number:') ?>
+                            <?php echo $block->escapeHtml($value['ups_account_number']) ?></i></label>
+                        </div>
+                        <div class="admin__field-control row">
+                            <label class="admin__field-value"><i><?php echo __('Pickup Postal Code:') ?>
+                            <?php echo $block->escapeHtml($value['post_code']) ?></i></label>
+                        </div>
+                        <div class="admin__field-control row">
+                            <label class="admin__field-value"><i><?php echo __('Country/Territory:') ?>
+                            <?php echo $block->escapeHtml($value['countryName']) ?></i></label>
+                        </div>
+                    <?php if ($value['account_default'] == '0') { ?>
+                        <div class="row">
+                            <legend style="margin-top: 15px;">
+                                <a href="javascript:;" class="removeAccount"
+                                data-id="<?php echo $block->escapeHtml($value['account_id']) ?>"><?= __('Remove')?></a>
+                            </legend>
+                        </div>
+                    <?php } ?>
+                    </fieldset>
+                </div>
+                <?php
+                    if ($id %4 == 3 || $id == $countList) {
+                        ?>
+                        </div>
+                        <?php
+                    }
+                }
+                ?>
+        </div>
+        <div style="margin-top: 15px;" class="row">
+            <fieldset class="fieldset admin__fieldset ">
+                <legend>
+                    <p id="addAccount"><a href="javascript:;" ><?php echo __('Add another account number') ?></a></p>
+                </legend>
+            </fieldset>
+            <fieldset class="fieldset admin__fieldset" id="addAccountSuccess" style="display: none;">
+                <legend>
+                    <i><span><?php echo __('Please enter the address attached to your account number') ?></span></i>
+                </legend>
+                <br/>
+                <legend class="full-width">
+                    <b><span class="show-word-break"><?php echo __('NOTE: If you have an existing UPS account number, please use the exact registered pickup address (which might be different from your invoice billing address) associated with this account number. Please note that the format of the postal code or zip code should exactly match the one provided in the registered pickup address.') ?></span></b>
+                </legend>
+                <br/>
+                <div class="admin__field field">
+                    <label  class="remove_pointer label admin__field-label"><span><?php echo __('Address type:') ?></span></label>
+                    <div class="admin__field-control data-grid-search-control-wrap" style="max-width: 100% !important;">
+                        <input  maxlength="50" value="<?= $dataError['AddressType'] ?>" name="AddressType"
+                        id="AddressType" placeholder="<?php echo __('Example: Warehouse, Branch #1') ?>" type="text" class="admin__control-text">
+                    </div>
+                    <div class="admin__field-tooltip">
+                        <a class="admin__field-tooltip-action"></a>
+                        <div class="admin__field-tooltip-content stype-right">
+                            <?php echo __("Reference name that will be associate with an account. For example warehouse 1, warehouse 2,  Store 1, Store 2 etc. You can freely chose the name as per your requirement") ?></div>
+                    </div>
+                </div>
+                <div class="admin__field field required">
+                    <label class="remove_pointer label admin__field-label">
+                    <span><?php echo __('Account Name:') ?></span>
+                    </label>
+                    <div class="admin__field-control">
+                        <input maxlength="35" value="<?= $dataError['AccountName'] ?>" name="AccountName"
+                        id="AccountName" data-validate="{'required': true, 'validate-rule': ''}"
+                        type="text" class="admin__control-text">
+                    </div>
+                    <div class="admin__field-tooltip">
+                        <a class="admin__field-tooltip-action"></a>
+                        <div class="admin__field-tooltip-content stype-right">
+                            <?php echo __("The name associated with your UPS account. It can be found on the top on each page of your UPS invoice under 'Purchaser'") ?></div>
+                    </div>
+                </div>
+                <div class="admin__field field required">
+                    <label class="remove_pointer label admin__field-label"><span><?php echo __('Pickup Address:') ?></span></label>
+                    <div class="admin__field-control control data-grid-search-control-wrap"
+                    style="max-width: 100% !important;">
+                    <input maxlength="35" value="<?= $dataError['AddressLine1'] ?>" name="AddressLine1"
+                    id="AddressLine1" data-validate="{'required': true}"
+                    placeholder="<?php echo __('Street Address') ?>" type="text" class="admin__control-text">
+                    </div>
+                    <div class="admin__field-tooltip">
+                        <a class="admin__field-tooltip-action"></a>
+                        <div class="admin__field-tooltip-content stype-right">
+                            <?php echo __("Use registered pickup address. <br />If you have any difficulties understanding which address to use, please contact your local UPS sales representative or call the support phone number provided on the “About” page")?>
+                        </div>
+                    </div>
+                </div>
+                <div class="admin__field field">
+                    <label class="remove_pointer label admin__field-label"><span></span></label>
+                    <div class="admin__field-control control data-grid-search-control-wrap"
+                    style="max-width: 100% !important;">
+                    <input maxlength="35" value="<?= $dataError['AddressLine2'] ?>" name="AddressLine2"
+                    id="AddressLine2" placeholder="<?php echo __('Apartment, Suite, Unit, Building, Floor, etc.') ?>"
+                    type="text" class="admin__control-text">
+                    </div>
+                </div>
+                <div class="admin__field field">
+                    <label class="remove_pointer label admin__field-label"><span></span></label>
+                    <div class="admin__field-control control data-grid-search-control-wrap"
+                    style="max-width: 100% !important;">
+                    <input maxlength="35" value="<?= $dataError['AddressLine3'] ?>" name="AddressLine3"
+                    id="AddressLine3" placeholder="<?php echo __('Department, c/o, etc.') ?>" type="text"
+                    class="admin__control-text">
+                    </div>
+                </div>
+                <?php if ('us' == $country) {?>
+                    <div class="admin__field field required">
+                        <label class="remove_pointer label admin__field-label"><span><?= __('State/Province:') ?></span></label>
+                        <div class="admin__field-control control">
+                            <select id="StateProvinceCode" name="StateProvinceCode" data-validate="{'required': true, 'validate-rule': ''}" class="select select admin__control-select">
+                                <?php foreach ($listStates as $valueState) { ?>
+                                    <option <?php if ($dataError['StateProvinceCode'] == $valueState['code']) {echo 'selected';} ?> value="<?= $valueState['code'] ?>"><?= __($valueState['name']) ?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                    </div>
+                <?php } ?>
+                <div class="admin__field field required">
+                    <label class="remove_pointer label admin__field-label"><span><?php echo __('Pickup Postal Code:') ?></span></label>
+                    <div class="admin__field-control control">
+                        <input value="<?php echo $dataError['PostalCode'] ?>" maxlength="9" name="PostalCode"
+                        id="PostalCode" data-validate="{'required': true, 'validate-rule': ''}" type="text" class="admin__control-text" >
+                    </div>
+                    <div class="admin__field-tooltip">
+                        <a class="admin__field-tooltip-action"></a>
+                        <div class="admin__field-tooltip-content stype-right">
+                            <?php echo __("The format of the postal code should exactly match the one provided in the registered pickup address. If you have any difficulties understanding which address to use, please contact your local UPS sales representative or call the support phone number provided on the “About” page")?>
+                        </div>
+                    </div>
+                </div>
+                <div class="admin__field field  required">
+                    <label class="remove_pointer label admin__field-label"><span><?php echo __('City:') ?></span></label>
+                    <div class="admin__field-control control">
+                    <input maxlength="30" name="AccountCity" value="<?= $dataError['AccountCity'] ?>" id="AccountCity"
+                    data-validate="{'required': true, 'validate-rule': ''}" type="text"
+                    class="admin__control-text">
+                    </div>
+                </div>
+                <div class="admin__field field">
+                    <label class="remove_pointer label admin__field-label"><span><?php echo __('Country/Territory:') ?></span></label>
+                    <div class="admin__field-control control">
+                        <?php $countryCode = $block->getCountryCode() ?>
+                        <?php foreach($block->getListContry() as $country1) {
+                            if ($country1['id'] == $countryCode) {?>
+                            <input type="hidden" name="CountryCode" value="<?php echo $countryCode ?>">
+                            <input disabled type="text" class="admin__control-text" name="CountryCode" id="CountryCode"
+                            value="<?php echo $country1['value']; ?>">
+                        <?php } ?>
+                        <?php } ?>
+                    </div>
+                </div>
+                <div class="admin__field field  required">
+                    <label class="remove_pointer label admin__field-label"><span><?php echo __('Phone:') ?></span></label>
+                    <div class="admin__field-control control">
+                        <input maxlength="15" name="PhoneNumber" value="<?= $dataError['PhoneNumber'] ?>"
+                        id="PhoneNumber" data-validate="{'required': true, 'validate-rule': ''}" type="text"
+                        class="admin__control-text">
+                    </div>
+                </div>
+            <legend>
+                <input type="radio" <?php if ($dataError['optradio']==1) { echo 'Checked';} ?> name="optradio"
+                id="accountWith90Days" value="1"><b> <?php echo __('I have a UPS Account Number WITH an invoice occurred in the last 45 days (90 days if your account is in the US or Canada)') ?></b>
+            </legend>
+            <br/>
+            <div class="admin__fieldset accountWith90Days_show <?php if ($dataError['optradio']!=1) {
+                echo 'hidden';} ?>">
+                <div class="admin__field field required accountWith90Days_show">
+                    <legend class="text">
+                    <i><?php echo __('The invoice should be 1 of the last 3 issued by UPS in last 45 days (90 days if your account is in the US or Canada)') ?></i>
+                    </legend>
+                    <br/>
+                    <label class="remove_pointer label admin__field-label">
+                    <span><?php echo __('Account Number:') ?></span>
+                    </label>
+                    <div class="admin__field-control">
+                        <?php if ( $dataError['optradio'] == 1) {?>
+                            <input value="<?php echo $dataError['AccountNumber'] ?>" maxlength="6" name="AccountNumber"
+                             id="AccountNumber"
+                             data-validate-hidden="{'required': true, 'validate-rule': 'accountNumber'}"
+                             data-validate="{'required': true, 'validate-rule': 'accountNumber'}" type="text"
+                             class="admin__control-text <?php echo $dataError['BorderAccountRed'] ?>">
+                        <?php } else { ?>
+                            <input value="<?php echo $dataError['AccountNumber'] ?>" maxlength="6" name="AccountNumber"
+                            id="AccountNumber"
+                            data-validate-hidden="{'required': true, 'validate-rule': 'accountNumber'}" type="text" class="admin__control-text" >
+                        <?php } ?>
+                    </div>
+                    <div class="admin__field-tooltip">
+                        <a class="admin__field-tooltip-action"></a>
+                        <div class="admin__field-tooltip-content stype-right">
+                            <?php echo __('A unique six character alphanumeric number that identifies your account. It can be found on the top left side on each page of your UPS invoice') ?></div>
+                    </div>
+                </div>
+                <div class="admin__field field  required accountWith90Days_show">
+                    <label class="remove_pointer label admin__field-label">
+                    <span><?php echo __('Invoice Number:') ?></span>
+                    </label>
+                    <div class="admin__field-control">
+                        <?php if ($dataError['optradio'] == 1) { ?>
+                            <input value="<?php echo $dataError['InvoiceNumber'] ?>" name="InvoiceNumber" maxlength="15"
+                            id="InvoiceNumber"
+                            data-validate-hidden="{'required': true, 'validate-rule': 'invoiceNumber'}"
+                            data-validate="{'required': true, 'validate-rule': 'invoiceNumber'}" type="text"
+                            class="admin__control-text">
+                        <?php } else { ?>
+                            <input value="<?php echo $dataError['InvoiceNumber'] ?>" name="InvoiceNumber" maxlength="15"
+                            id="InvoiceNumber"
+                            data-validate-hidden="{'required': true, 'validate-rule': 'invoiceNumber'}" type="text" class="admin__control-text">
+                        <?php }?>
+                    </div>
+                    <div class="admin__field-tooltip">
+                        <a class="admin__field-tooltip-action"></a>
+                        <div class="admin__field-tooltip-content stype-right">
+                            <?php echo __('A unique 12 digit number assigned by UPS to an invoice. It can be found on the top left side on each page of your UPS invoice') ?></div>
+                    </div>
+                </div>
+                <?php if ('us' == $selectedCountry) { ?>
+                    <div class="admin__field field  required accountWith90Days_show">
+                        <label class="remove_pointer label admin__field-label ">
+                            <span><?php echo __('Control ID:') ?></span>
+                        </label>
+                        <div class="admin__field-control width-input">
+                            <?php if ($dataError['optradio'] == 1) { ?>
+                                <input value="<?php if ($dataError['optradio'] == 1) { echo __($dataError['ControlId']);} ?>" maxlength="35" name="ControlId" id="ControlId" data-validate="{'required': true, 'validate-rule': 'invoiceNumber'}" data-validate-hidden="{'required': true, 'validate-rule': 'invoiceNumber'}" type="text" class="admin__control-text">
+                            <?php } else { ?>
+                                <input value="<?php if ($dataError['optradio'] == 1) { echo __($dataError['ControlId']);} ?>" maxlength="35" name="ControlId" id="ControlId" data-validate-hidden="{'required': true, 'validate-rule': 'invoiceNumber'}" type="text" class="admin__control-text">
+                            <?php }?>
+                        </div>
+                    </div>
+                <?php } ?>
+                <div class="admin__field field  required accountWith90Days_show">
+                    <label class="remove_pointer label admin__field-label">
+                    <span class=""><?php echo __('Invoice Amount:') ?></span>
+                    </label>
+                    <div class="admin__field-control">
+                        <?php if ($dataError['optradio'] == 1) { ?>
+                            <input value="<?php echo $dataError['InvoiceAmount'] ?>" maxlength="19" name="InvoiceAmount"
+                             id="InvoiceAmount"
+                             data-validate-hidden="{'required': true, 'validate-rule': 'invoiceAmount'}"
+                             data-validate="{'required': true, 'validate-rule': 'invoiceAmount'}" type="text"
+                             class="admin__control-text">
+                        <?php } else { ?>
+                            <input value="<?php echo $dataError['InvoiceAmount'] ?>" maxlength="19" name="InvoiceAmount"
+                             id="InvoiceAmount"
+                             data-validate-hidden="{'required': true, 'validate-rule': 'invoiceAmount'}" type="text" class="admin__control-text">
+                        <?php }?>
+                    </div>
+                    <div class="admin__field-tooltip">
+                        <a class="admin__field-tooltip-action"></a>
+                        <div class="admin__field-tooltip-content stype-right">
+                            <?php echo __("Total Amount Due for the given invoice. It can be found on the 'Summary of Charges' table on the first page on the invoice") ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="admin__field field required accountWith90Days_show">
+                    <label class="remove_pointer label admin__field-label"><span><?php echo trim(__('Currency ')) ?></span></label>
+                    <div class="admin__field-control control">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <select style="width:100% !important" class="select select admin__control-select" id="Currency"
+                                name="Currency">
+                                <?php foreach($block->getListCurrency() as $id=>$currency) { ?>
+                                    <option <?php if ($dataError['Currency'] == $id) { echo 'selected'; } ?> value="<?php echo $id; ?>">
+                                <?php echo $currency; ?></option>
+                                <?php } ?>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="admin__field field required accountWith90Days_show">
+                    <label class="remove_pointer label admin__field-label">
+                    <span><?php echo __('Invoice date:') ?></span>
+                    </label>
+                    <div class="admin__field-control _with-tooltip">
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <input style="width:100% !important" name="InvoiceDate" id="datepicker"
+                                data-validate-hidden="{'required': true, 'validate-rule': 'date'}" type="text"
+                                class="admin__control-text">
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="admin__field-tooltip">
+                                    <a class="admin__field-tooltip-action"></a>
+                                    <div class="admin__field-tooltip-content">
+                                        <?php echo __("Date of issuing the invoice. It can be found on the top left side on each page of your UPS invoice") ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <legend>
+                <input <?php if ($dataError['optradio']==2) { echo 'Checked';} ?> type="radio" name="optradio"
+                id="accountWithOut90Days" value="2"><b> <?php echo __('I have a UPS Account Number WITHOUT an invoice occurred in the last 45 days (90 days if your account is in the US or Canada)') ?></b>
+            </legend>
+            <br/>
+            <div class="admin__field field required accountWithOut90Days_show <?php if ($dataError['optradio']!=2) {
+                echo 'hidden';} else {echo 'accountWithOut90Days_show';} ?>">
+                <label class="remove_pointer label admin__field-label">
+                <span><?php echo __('Account Number:') ?></span>
+                </label>
+                <div class="admin__field-control">
+                    <?php if ($dataError['optradio'] == 2) {?>
+                        <input value="<?php echo $dataError['AccountNumber1'] ?>" maxlength="6" name="AccountNumber1"
+                        id="AccountNumber1" data-validate-hidden="{'required': true, 'validate-rule': 'accountNumber'}"
+                         data-validate="{'required': true, 'validate-rule': 'accountNumber'}" type="text"
+                         class="admin__control-text <?php echo $dataError['BorderAccountRed'] ?>" >
+                    <?php } else { ?>
+                        <input value="<?php echo $dataError['AccountNumber1'] ?>" maxlength="6" name="AccountNumber1"
+                        id="AccountNumber1" data-validate-hidden="{'required': true, 'validate-rule': 'accountNumber'}"
+                         type="text" class="admin__control-text" >
+                    <?php } ?>
+                </div>
+                <div class="admin__field-tooltip">
+                    <a class="admin__field-tooltip-action"></a>
+                    <div class="admin__field-tooltip-content stype-right">
+                        <?php echo __('A unique six character alphanumeric number that identifies your account. It can be found on the top left side on each page of your UPS invoice') ?></div>
+                </div>
+            </div>
+            </fieldset>
+        </div>
+        <p><br></p>
+        <div class="admin__field page-main-actions">
+            <div class="page-actions button-save-account <?php if ($dataError['AccountName']=="") {echo 'hidden';} ?>"
+            style="float: left;">
+                <button type="submit" name="submit_accountsuccess"
+                class="button-next action-default primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"  role="button" aria-disabled="false" style="margin-left: 0;">
+                    <span class="ui-button-text">
+                        <span><?= __('Verify') ?></span>
+                    </span>
+                </button>
+            </div>
+            <div class="page-actions">
+                <button type="button" id="nextPage"
+                class="button-next action-default primary ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only"  role="button" aria-disabled="false">
+                    <span class="ui-button-text">
+                        <span><?= __('Next') ?></span>
+                    </span>
+                </button>
+            </div>
+        </div>
+        <input type="hidden" name="accountsuccessvalidatemessage" id="accountsuccessvalidatemessage" value="<?php echo __('Some of the data you entered is not valid. Please check again.') ?>">
+        <input type="hidden" name="commonvalidatemessage" id="commonvalidatemessage" value="<?php echo __('Some of the data you entered is not valid. Please check again.')?>">
+        <input type="hidden" name="errorMessage" id="errorMessage" value="<?= $errorMessage ?>">
+        <input type="hidden" name="successMessage" id="successMessage" value="<?= $successMessage ?>">
+        <input type="hidden" name="okMessage" id="okMessage" value="<?= __('OK') ?>">
+        <input type="hidden" name="urlsaveaccountsuccess" id="urlsaveaccountsuccess" value="<?php echo $block->getUrl('upsshipping/config/saveAccountSuccess') ?>">
+        <input type="hidden" name="cancelaccountsuccessmassage" id="cancelaccountsuccessmassage" value="<?= __('Cancel') ?>">
+        <input type="hidden" name="confirmaccountsuccessmassage" id="confirmaccountsuccessmassage" value="<?= __('This account will be removed. Click Ok to confirm, close the dialog to cancel.') ?>">
+        <input type="hidden" name="removeaccountmessage" id="removeaccountmessage" value="<?= __('Remove Account') ?>">
+        <input type="hidden" name="invoicedatevalue" id="invoicedatevalue" value="<?= $dataError['InvoiceDate'] ?>">
+        <input type="hidden" name="accountnamevalue" id="accountnamevalue" value="<?= $dataError['AccountName'] ?>">
+        <input type="hidden" name="urlshippingservice" id="urlshippingservice" value="<?php echo $block->getUrl('upsshipping/config/shippingservice')?>">
+        <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+    </form>
+</div>
+<?php if ('us' == $selectedCountry) {
+    ?>
+    <div style="padding-top: 1em; line-height: 1.5;">
+        <div class="row">
+            <div class="col-l-12" style="color: #777;">
+                <?php echo '© ' . date("Y") .' United Parcel Service of America, Inc. <br />UPS,  the UPS Shield trademark, the UPS Ready mark, the UPS Developer Kit mark and the Color Brown are trademarks of United Parcel Service of America, Inc. All Rights Reserved.';; ?>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/accountsuccess": {}
+        }
+    }
+</script>

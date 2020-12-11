@@ -1,0 +1,48 @@
+.remove_pointer {
+    cursor: default!important;
+    width: calc( (100%) * .25 - 20px )!important;
+}
+.titleAccount {
+    background: url(../images/user-shape.png) no-repeat center left;
+    text-indent: 25px;
+}
+#addAccount {
+    background: url(../images/add.png) no-repeat center left;
+    text-indent: 25px;
+}
+legend.text {
+    margin-left: 40px;
+}
+.admin__field-tooltip-action {
+    position: relative;
+}
+.admin__field-tooltip .stype-right {
+    right: -7.2rem;
+}
+.page-title {
+    background: url(../images/ups_logo.svg) no-repeat center left;
+    line-height: 50px;
+    text-indent: 60px;
+    background-size: 2em;
+}
+.modal-title {
+    background: url(../images/ups_logo.svg) no-repeat center left;
+    line-height: 50px;
+    text-indent: 60px;
+    background-size: 2em;
+}
+.popup-inner {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 0px;
+}
+.no-spaces {
+    white-space: nowrap!important;
+}
+.show-word-break {
+    word-break: break-all!important;
+}
+.full-width {
+    width:100%;
+}

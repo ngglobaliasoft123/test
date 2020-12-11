@@ -1,0 +1,60 @@
+<?php
+$accessorials = $block->getListAccessorial();
+$selectedCountry = strtolower($block->getCountryCode());
+?>
+<div class="page-main-actions">
+    <h2 class="titleAccessorial" style="margin-bottom:0%"><?=__('Accessorial Services') ?></h2>
+</div>
+<div class="admin__field admin__field-option">
+    <label class="admin__field-label"><?= __('You can select among the options you chose here when you schedule UPS pickups. Select the accessorial services best describe your package would eleminate the chance being charged for wrong shipping information. Don\'t worry, you can select among your chosen services before creating a shipment.') ?></label>
+</div>
+<form action="<?php echo $block->getUrl('upsshipping/config/saveAccessorial'); ?>" method="post">
+    <div class="row">
+        <div class="col-m-3"></div>
+        <div class="col-m-9">
+            <?php
+                foreach ($accessorials as $accessorial) {
+            ?>
+                <div class="admin__field admin__field-option">
+                    <input type="checkbox" class="admin__control-checkbox" id="<?=$accessorial['id'] ?>"
+                    name="<?=$accessorial['accessorial_key'] ?>" value="1"
+                    <?php if ($accessorial['show_shipping'] == 1) echo "checked"; ?> >
+                    <label for="<?=__($accessorial['id'])?>" class="admin__field-label">
+                    <?=__($accessorial['accessorial_name']) ?></label>
+                </div>
+            <?php
+                }
+            ?>
+        </div>
+    </div>
+    <br/>
+    <div class="admin__field page-main-actions">
+        <div class="page-actions">
+            <button title="<?= __('Save') ?>" type="submit"
+            class="button-next action-default primary ui-button ui-widget ui-state-default
+            ui-corner-all ui-button-text-only"  role="button" aria-disabled="false">
+                <span class="ui-button-text">
+                    <span><?= __('Save') ?></span>
+                </span>
+            </button>
+        </div>
+    </div>
+    <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+</form>
+<?php if ('us' == $selectedCountry) {
+    ?>
+    <div style="padding-top: 1em; line-height: 1.5;">
+        <div class="row">
+            <div class="col-l-12" style="color: #777;">
+                <?php echo '© ' . date("Y") .' United Parcel Service of America, Inc. <br />UPS,  the UPS Shield trademark, the UPS Ready mark, the UPS Developer Kit mark and the Color Brown are trademarks of United Parcel Service of America, Inc. All Rights Reserved.'; ?>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/accessorial": {}
+        }
+    }
+</script>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>UPS Shipping Module</title>
+        <css src="UPS_Shipping::css/shippingservice.css"/>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="UPS\Shipping\Block\Adminhtml\Config\Shippingservice" name="shipping_config_shippingservice" template="UPS_Shipping::Config/shippingservice.phtml" />
+        </referenceContainer>
+    </body>
+</page>

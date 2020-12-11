@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <carriers>
+            <upsshipping>
+                <active>1</active>
+                <name>UPS Shipping</name>
+                <title>UPS Shipping</title>
+                <fixed_price>1</fixed_price>
+                <model>UPS\Shipping\Model\Carrier</model>
+            </upsshipping>
+        </carriers>
+    </default>
+</config>

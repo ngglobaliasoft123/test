@@ -1,0 +1,61 @@
+
+.remove_pointer {
+    cursor: default!important;
+    width: calc( (100%) * .25 - 20px )!important;
+}
+.us_label_note {
+    top: 15px;
+}
+.titleAccount {
+    background: url(../images/user-shape.png) no-repeat center left;
+    text-indent: 25px;
+}
+legend.text {
+    margin-left: 40px;
+}
+.admin__field-tooltip-action {
+    position: relative;
+}
+.admin__field-tooltip .stype-right {
+    right: -7.2rem;
+}
+.width-input {
+    width: calc( (100%) * .6 - 10px ) !important;
+    max-width: 100% !important;
+}
+::placeholder {
+    font-size: 1.1rem;
+}
+.page-title {
+    background: url(../images/ups_logo.svg) no-repeat center left;
+    line-height: 50px;
+    text-indent: 60px;
+    background-size: 2em;
+}
+.admin_control-input {
+    -webkit-appearance: none;
+    background-color: #fff;
+    border: 1px solid #adadad;
+    border-radius: 1px;
+    box-shadow: none;
+    color: #303030;
+    font-size: 1.4rem;
+    font-weight: 400;
+    height: auto;
+    line-height: 1.36;
+    padding: .6rem 1rem .6rem;
+    transition: border-color .1s linear;
+    vertical-align: baseline;
+}
+#VATNumber {
+    width: 24%;
+}
+.marginBottom {
+    margin-bottom: 2rem!important;
+}
+.popup-inner {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 0px;
+}

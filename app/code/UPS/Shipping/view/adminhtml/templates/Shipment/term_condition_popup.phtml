@@ -1,0 +1,12 @@
+<div id="term_condition_popup" class="hidden">
+<p><?=__("NOTICE: The UPS package tracking systems accessed via this service (the &quot; Tracking Systems &quot;) and tracking information obtained through this service (the &quot; Information &quot;) is the private property of UPS. UPS authorizes you to use the Tracking Systems solely to track shipments tendered by or for you to UPS for delivery and for no other purpose. Without limitation, you are not authorized to make the Information available on any web site or otherwise reproduce, distribute, copy, store, use or sell the Information for commercial gain without the express written consent of UPS. This is a personal service, thus your right to use the Tracking Systems or Information is non-assignable. Any access or use that is inconsistent with these terms is unauthorized and strictly prohibited.") ?></p>
+</div>
+<input type="hidden" name="termconditionTitle" id="termconditionTitle" value="<?= __('UPS Tracking Terms and Conditions') ?>">
+<input type="hidden" name="okMessage" id="okMessage" value="<?= __('OK') ?>">
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/popuptermcondition": {}
+        }
+    }
+</script>

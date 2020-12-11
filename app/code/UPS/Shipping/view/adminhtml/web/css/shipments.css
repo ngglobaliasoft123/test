@@ -1,0 +1,34 @@
+#popup_shipments_layout_details {
+    width: 686px; margin: auto;
+}
+#shipments-layout-title {
+    text-align: center;
+}
+#shipments-layout-info .label-value {
+    padding: 5px 0px 5px 8px;
+}
+.page-title {
+    background: url(../images/ups_logo.svg) no-repeat center left;
+    line-height: 50px;
+    text-indent: 60px;
+    background-size: 2em;
+}
+.modal-title {
+    background: url(../images/ups_logo.svg) no-repeat center left;
+    line-height: 50px;
+    text-indent: 60px;
+    background-size: 2em;
+}
+.term-condition {
+    background: #c3daf9;
+}
+.popup-cancel {
+    margin: 20px 0 50px 50px;
+    font-size: 1.58rem;
+}
+.popup-inner {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 0px;
+}

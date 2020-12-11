@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>UPS Shipping Module</title>
+        <css src="UPS_Shipping::css/accountsuccess.css"/>
+        <script src="UPS_Shipping::js/validate.js"></script>
+    </head>
+    <body>
+        <referenceContainer name="content">
+            <block class="UPS\Shipping\Block\Adminhtml\Config\AccountSuccess" name="shipping_config_accountsuccess" template="UPS_Shipping::Config/accountsuccess.phtml" />
+        </referenceContainer>
+    </body>
+</page>

@@ -1,0 +1,71 @@
+.titleCashondelivery {
+    background: url(../images/cash-on-delivery.png) no-repeat center left;
+    text-indent: 25px;
+}
+.note {
+    color: #303030;
+    font-size: 12px;
+    margin: 5px 0;
+    font-style: italic;
+}
+.padding-label-css {
+    font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    line-height: 3.2rem;
+    padding: 0;
+    white-space: nowrap;
+    color: #303030;
+    cursor: pointer;
+    text-align: right;
+    float: left;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    word-break: break-word;
+    color: #303030;
+    cursor: pointer;
+    text-align: right;
+}
+.page-title {
+    background: url(../images/ups_logo.svg) no-repeat center left;
+    line-height: 50px;
+    text-indent: 60px;
+    background-size: 2em;
+}
+.checkedCOD {
+    background: url(../images/have_cod.png) no-repeat center left;
+    width: 100%;
+    height: 100%;
+    padding: 14px;
+}
+
+.content-cod-css {
+    padding-left: 15px;
+    display: block!important;
+}
+
+.nocheckedCOD {
+    background: url(../images/no_cod.png) no-repeat center left;
+    width: 50%;
+    height: 50%;
+    padding: 8px;
+}
+.hasCOD {
+    float: left;
+    margin-right: 14px;
+    width: 26px;
+}
+.hasNoCOD {
+    float: left;
+    margin-right: 14px;
+    width: 14px;
+}
+.contentCOD {
+    font-weight: bold;
+}
+.popup-inner {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 0px;
+}

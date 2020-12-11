@@ -1,0 +1,126 @@
+<?php
+    $listArchivedOrder = $block->getListArchivedOrders();
+    $pageArchivedOrders = $block->getPageArchivedOrders();
+    $currencySymbol = $block->getCurrencySymbol();
+    $selectedCountry = strtolower($block->getCountryCode());
+?>
+<div class="body_panel">
+    <div class="list-button">
+        <button type="button" id="updateUnArchiveOrder" value="save" disabled>
+            <span><?php echo __('Un-Archive Orders') ?></span>
+        </button>
+    </div>
+    <form action="<?php echo $block->getUrl('upsshipping/shipment/unarchiveOrder')?>" method="post"
+    id="updateValue" class="hidden">
+        <input type="submit" value='updateUnArchiveOrder' name='updateUnArchivedStatus'/>
+        <input type="hidden" value='' name='orderIds'/>
+        <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+    </form>
+    <div class="row" id="shipments-layout">
+        <table class="data-grid data-grid-draggable list-data-table">
+            <thead>
+                <tr>
+                    <th>
+                        <input class="admin__control-checkbox" type="checkbox" id="selectAll">
+                        <label for="selectAll" class="labelCheckAll"></label>
+                    </th>
+                    <?php
+                        $columnHeader = $block->getColumnHeader();
+                        foreach($columnHeader as $key => $column) {
+                            if (isset($column['width'])) {
+                                echo '<th style="min-width: '. $column['width'] .'">'.$column['text'];
+                            } else {
+                                echo '<th>'.$column['text'];
+                            }
+                            if ($column['sort'] != 'NONE') {
+                                $link = $block->getUrl('upsshipping/shipment/archived/page_id/'.$block->getCurrentPage()
+                                .'/'.$key.'/'.$column['sort']);
+                                echo '<a href="'.$link.'" class="sort '.(($column['sort'] == 'ASC') ? 'up' : 'down')
+                                .'"></a>';
+                            }
+                            echo '</th>';
+                        }
+                    ?>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($listArchivedOrder as $listID) { ?>
+                    <tr>
+                        <td>
+                            <input class="admin__control-checkbox selectAll" id="order<?= $listID['id']?>" type="checkbox"
+                            value="<?= $listID['id']?>">
+                            <label for="order<?= $listID['id']?>"></label>
+                        </td>
+                        <td class="archived-order-grid-view"><input type="hidden" name="orderId"
+                        value="<?= $listID['id']?>"><?= $listID['increment_id'] ?></td>
+                        <td class="archived-order-grid-view"><?= date("M d, Y", strtotime($listID['created_at'])) ?></td>
+                        <td class="archived-order-grid-view"><?= date("H:i:s", strtotime($listID['created_at'])) ?></td>
+                        <td class="archived-order-grid-view align-left"><?= $listID['listProductName']; ?></td>
+                        <td class="archived-order-grid-view align-left"><?php echo $listID['AddressFormat']; ?></td>
+                        <td class="archived-order-grid-view align-left"><?php ($listID['service_type'] == 'ADD')
+                        ? $sv = 'Address': $sv = 'AP'; echo 'To ' . $sv. ' (' . $listID['service_name_info'] . ')' ?></td>
+                        <td class="archived-order-grid-view"><?php if ($listID['cod'] == 1) {
+                            echo '<img class="checkedCOD" />';} else {echo '<img class="cancelCOD" />';} ?></td>
+                    </tr>
+                <?php
+                    }
+                    if (count($listArchivedOrder) == 0) {
+                        echo '<tr class="no_archived_rows"><td colspan="8" align="center">
+                        <p>'.__("We couldn't find any records").'</p></td></tr>';
+                    }
+                ?>
+            </tbody>
+        </table>
+    </div>
+    <br>
+    <div class="row">
+        <div class="col-l-12" align="center">
+            <nav>
+                <ul class="pagination">
+                    <?php
+                        $sortColumn = $block->getSortColumn();
+                        $listPages = $block->orderPagination();
+                        foreach($listPages as $row) {
+                            $active = ($row['page'] == $block->getCurrentPage()) ? "active" : "";
+                            if ($row['page'] == '') {
+                                $link = 'javascript:;';
+                            } else {
+                                $link = 'upsshipping/shipment/archived/page_id/'.$row['page'];
+                                if (!empty($sortColumn)) {
+                                    $link .= '/'.$sortColumn[0].'/'.$sortColumn[1];
+                                }
+                                $link = $block->getUrl($link);
+                            }
+                            echo '<li class="'.$active.'"><a href="'.$link.'">'.$row['text'].'</a></li>';
+                        }
+                    ?>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<?php if ('us' == $selectedCountry) {
+    ?>
+    <div style="padding-top: 1em; line-height: 1.5;">
+        <div class="row">
+            <div class="col-l-12" style="color: #777;">
+                <?php echo '© ' . date("Y") .' United Parcel Service of America, Inc. <br />UPS,  the UPS Shield trademark, the UPS Ready mark, the UPS Developer Kit mark and the Color Brown are trademarks of United Parcel Service of America, Inc. All Rights Reserved.';; ?>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+<input type="hidden" name="okmessage" id="okmessage" value="<?= __('OK') ?>">
+<input type="hidden" name="cancelmessage" id="cancelmessage" value="<?= __('Cancel') ?>">
+<input type="hidden" name="warningmessage" id="warningmessage" value="<?= __("Warning! Un-Archiving orders will move your orders to Open Orders tab. Click 'OK' to continue, 'Cancel' to go back to the screen.") ?>">
+<input type="hidden" name="unarchivingorder" id="unarchivingorder" value="<?= __('Un-Archiving Orders') ?>">
+<input type="hidden" name="shiptoservicenameadd" id="shiptoservicenameadd" value="<?= __(\UPS\Shipping\Helper\Config::SHIP_TO_SERVICE_ADD) ?>">
+<input type="hidden" name="shiptoservicenameap" id="shiptoservicenameap" value="<?= __(\UPS\Shipping\Helper\Config::SHIP_TO_SERVICE_AP) ?>">
+<input type="hidden" name="urlorderdetail" id="urlorderdetail" value="<?php echo $block->getURL('upsshipping/shipment/orderDetail') ?>">
+<input type="hidden" name="urlarchivedorder" id="urlarchivedorder" value="<?= \UPS\Shipping\Helper\Config::STATUS_ARCHIVE_ORDER ?>">
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/archived": {}
+        }
+    }
+</script>

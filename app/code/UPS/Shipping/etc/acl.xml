@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="UPS_Shipping::shipping" title="UPS Module" sortOrder="30">
+                    <resource id="UPS_Shipping::about" title="About" sortOrder="0">
+                    </resource>
+                    <resource id="UPS_Shipping::config" title="Configuration" sortOrder="1">
+                        <resource id="UPS_Shipping::country" title="Country setting" sortOrder="1"/>
+                        <resource id="UPS_Shipping::termcondition" title="UPS Terms and Conditions" sortOrder="2"/>
+                        <resource id="UPS_Shipping::account" title="Account" sortOrder="11"/>
+                        <resource id="UPS_Shipping::shippingservice" title="Shipping Service" sortOrder="12"/>
+                        <resource id="UPS_Shipping::cashondelivery" title="Collect on Delivery (COD)" sortOrder="13"/>
+                        <resource id="UPS_Shipping::package" title="Package Dimensions" sortOrder="15"/>
+                        <resource id="UPS_Shipping::deliveryrates" title="Checkout Shipping Rates" sortOrder="15"/>
+                        <resource id="UPS_Shipping::billingpreference" title="Complete Configuration" sortOrder="15"/>
+                    </resource>
+                    <resource id="UPS_Shipping::management" title="Shipment management" sortOrder="2">
+                        <resource id="UPS_Shipping::shipment" title="Shipment Manager" sortOrder="1"/>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

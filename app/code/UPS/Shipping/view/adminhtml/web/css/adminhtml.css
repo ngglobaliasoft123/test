@@ -1,0 +1,21 @@
+@font-face {
+    font-family: 'icomoon';
+    src: url('../fonts/icomoon.eot?h0331n');
+    src: url('../fonts/icomoon.eot?h0331n#iefix') format('embedded-opentype'),
+        url('../fonts/icomoon.ttf?h0331n') format('truetype'),
+        url('../fonts/icomoon.woff?h0331n') format('woff'),
+        url('../fonts/icomoon.svg?h0331n#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.admin__menu .item-shipping>a:before {
+    font-family: 'icomoon' !important;
+    content: "\e900" !important;
+}
+.popup-inner {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 0px;
+}

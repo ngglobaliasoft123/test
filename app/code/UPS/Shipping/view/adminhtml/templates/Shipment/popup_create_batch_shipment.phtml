@@ -1,0 +1,48 @@
+<?php
+    $listAccount = $block->getListAccount();
+?>
+<div id="popup_create_batch_shipment" class="hidden">
+    <form action="<?php echo $block->getUrl('upsshipping/shipment/createshipment') ?>" method="post"
+    id="formBatchShipment" style="margin-top:10px">
+    <div class="row">
+        <div class="col-xs-4 admin__field field">
+            <label class="label admin__field-label"><b><?php echo __('Account number') ?></b></label>
+        </div>
+        <div class="col-xs-8">
+            <div class="admin__field-control control">
+                <select style="width:100% !important" class="select admin__control-select" id="createBatchAccount"
+                name="createBatchAccount">
+                    <?php foreach($listAccount as $key => $value) { ?>
+                        <option value="<?php echo $value['account_id'] ?>">
+                        <?php echo $value['address_type'] ?> (#<?php echo $value['ups_account_number'] ?>)</option>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12 admin__field field">
+            <label class="label admin__field-label"><b><?php echo __('Orders to be processed:') ?></b></label>
+            <div class="admin__field-control control">
+                <textarea name="message" readonly rows="15" cols="99" style="resize:none; width:100%;" name="listOrders" id="listOrders"></textarea>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" name="okMessage" id="okMessage" value="<?= __('OK') ?>">
+    <input type="hidden" name="urlcreateshipment" id="urlcreateshipment" value="<?php echo $block->getURL('upsshipping/shipment/createshipment')?>">
+    <input type="hidden" name="urlorderdetail" id="urlorderdetail" value="<?php echo $block->getURL('upsshipping/shipment/orderDetail') ?>">
+    <input type="hidden" name="urlorder" id="urlorder" value="<?php echo $block->getUrl('upsshipping/shipment/order') ?>">
+    <input type="hidden" name="urlbathshipment" id="urlbathshipment" value="<?php echo $block->getURL('upsshipping/shipment/bathshipment') ?>">
+    <input type="hidden" name="createshipmentmessage" id="createshipmentmessage" value="<?php echo __('Create Shipment') ?>">
+    <input type="hidden" name="processshipmentmessage" id="processshipmentmessage" value="<?php echo __('Process Shipment') ?>">
+    <input name="form_key" type="hidden" value="<?php echo $block->getFormKey();?>">
+    </form>
+    <div id="messageBatch"></div>
+</div>
+<script type="text/x-magento-init">
+    {
+        "*": {
+            "UPS_Shipping/js/popupcreatebatchshipment": {}
+        }
+    }
+</script>

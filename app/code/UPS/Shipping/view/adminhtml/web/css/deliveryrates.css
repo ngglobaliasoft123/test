@@ -1,0 +1,72 @@
+h2.titleDeliveryRates {
+    background: url(../images/euro-currency-symbol.png) no-repeat center left;
+    text-indent: 25px;
+}
+.fontRight {
+    text-align: right !important;
+}
+.titleAdd {
+    background: url(../images/add.png) no-repeat center center;
+    text-indent: 25px;
+    min-height: 33px;
+}
+.titleRemove {
+    background: url(../images/remove.png) no-repeat center left;
+    text-indent: 25px;
+    min-height: 33px;
+}
+.iconLeft {
+    margin-left:20px !important;
+}
+.marginBottomOption {
+    margin-bottom: 15px !important;
+}
+.marginTopCurrency {
+    margin-top: 5px !important;
+}
+.widthOptionCurrency {
+    width: 100% !important;
+}
+.fontNormal {
+    font-weight: normal !important;
+}
+.admin__field-error {
+    display: inline !important;
+    height: 33px !important;
+    margin-top: 0px !important;
+    font-size: 1.4rem !important;
+}
+.widthFlatRates {
+    width: 90% !important;
+}
+.floatLeftButton {
+    float: left !important;
+}
+.marginTopButton {
+    margin-top: 20px !important;
+}
+.page-title {
+    background: url(../images/ups_logo.svg) no-repeat center left;
+    line-height: 50px;
+    text-indent: 60px;
+    background-size: 2em;
+}
+.labelTitle {
+    margin-right:10px !important;
+}
+.labelRealTime {
+    margin-left:10px !important;
+}
+.popup-inner {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 0px;
+}
+.shipping-rate-types {
+    margin-left: 40px;
+    line-height: 1.7;
+}
+.left-10 {
+    margin-left: 17px;
+}

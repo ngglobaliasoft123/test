@@ -1,0 +1,43 @@
+.titleAccount {
+    background: url(../images/user-shape.png) no-repeat center left;
+    text-indent: 25px;
+}
+.page-title {
+    background: url(../images/ups_logo.svg) no-repeat center left;
+    line-height: 50px;
+    text-indent: 60px;
+    background-size: 2em;
+}
+.wrapword {
+    white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+    white-space: -webkit-pre-wrap; /*Chrome & Safari */
+    white-space: -pre-wrap;      /* Opera 4-6 */
+    white-space: -o-pre-wrap;    /* Opera 7 */
+    white-space: pre-wrap;       /* css-3 */
+    word-wrap: break-word;       /* Internet Explorer 5.5+ */
+    word-break: break-all;
+    white-space: normal;
+    vertical-align: top;
+}
+th, td {
+    border-bottom: 1px solid rgb(49, 49, 49);
+}
+.admin__field-option {
+    padding-top: 0!important;
+    padding-left: 3.7rem;
+}
+page-main-actions {
+    margin: 0 0 1rem!important;
+}
+
+.admin__field-option ul {
+    list-style-type: disc;
+    padding-left: 15px;
+}
+
+.popup-inner {
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    height: 0px;
+}
